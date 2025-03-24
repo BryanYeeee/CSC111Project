@@ -7,10 +7,10 @@ from networkx_visual import visualize_graph
 
 DATASET_NAME_1 = "datasets/kaggle_spotify_songs_1.csv"
 DATASET_NAME_2 = "datasets/kaggle_spotify_songs_2.csv"
-TESTING_LIMIT = 550
+TESTING_LIMIT = 100000
 
-BASE_GENRES = {"pop", "rock"}
-SAME_GENRES = {"rap": "hip-hop", "songwriter": "singer-songwriter", "r&b": "r-n-b"}
+BASE_GENRES = {"pop", "rock", "techno", "metal", "house", "reggae", "songwriter"}
+SAME_GENRES = {"rap": "hip-hop", "r&b": "r-n-b"}
 
 def filter_genre(genre: str) -> str:  
     """
