@@ -8,6 +8,21 @@ import csv
 from typing import Any
 import networkx as nx
 
+SIMILARITY_WEIGHTING = {
+    "genre": 2.0,
+    "danceability": 1.5,
+    "energy": 1.5,
+    "valence": 1.2,
+    "key": 1.0,
+    "mode": 0.8,
+    "tempo": 1.0,
+    "loudness": 0.5,
+    "speechiness": 0.3,
+    "acousticness": 0.5,
+    "instrumentalness": 0.7,
+    "liveness": 0.4
+}
+
 class _Vertex:
     """A Vertex in a graph
 
@@ -17,7 +32,7 @@ class _Vertex:
         - neighbours: neighbouring vertices mapped to the similarity score between them
 
     Representation Invariant:
-        - 
+        -
     """
     vertex_id: str
     track_name: str
@@ -60,12 +75,48 @@ class _Vertex:
         self.valence = valence
         self.tempo = tempo
         self.track_genre = track_genre
-        
+
         self.neighbours = {}
 
     def degree(self) -> int:
         """Return the degree of this vertex"""
         return len(self.neighbours)
+
+    def get_similarity(self, other: _Vertex) -> float:
+        """
+        Calculates the similarit score of 2 vertices
+        The formula used is ......
+        """
+        score = 0
+
+        if self.track_genre == other.track_genre:
+            score += SIMILARITY_WEIGHTING["genre"]
+
+        numerical_features = [
+            ("danceability", self.danceability, other.danceability, SIMILARITY_WEIGHTING["danceability"]),
+            ("energy", self.energy, other.energy, SIMILARITY_WEIGHTING["energy"]),
+            ("valence", self.valence, other.valence, SIMILARITY_WEIGHTING["valence"]),
+            ("key", self.key, other.key, SIMILARITY_WEIGHTING["key"]),
+            ("mode", self.mode, other.mode, SIMILARITY_WEIGHTING["mode"]),
+            ("tempo", self.tempo, other.tempo, SIMILARITY_WEIGHTING["tempo"]),
+            ("loudness", self.loudness, other.loudness, SIMILARITY_WEIGHTING["loudness"]),
+            ("speechiness", self.speechiness, other.speechiness, SIMILARITY_WEIGHTING["speechiness"]),
+            ("acousticness", self.acousticness, other.acousticness, SIMILARITY_WEIGHTING["acousticness"]),
+            ("instrumentalness", self.instrumentalness, other.instrumentalness,
+             SIMILARITY_WEIGHTING["instrumentalness"]),
+            ("liveness", self.liveness, other.liveness, SIMILARITY_WEIGHTING["liveness"])
+        ]
+
+        for feature_name, val1, val2, weight in numerical_features:
+            if feature_name == "tempo":
+                tempo_diff = abs(val1 - val2) / max(val1, val2)
+                score += weight * tempo_diff ** 2
+            else:
+                score += weight * (val1 - val2) ** 2
+
+        similarity = 1 / (1 + score)
+        return similarity
+
 
 class SongGraph:
     """
@@ -87,21 +138,21 @@ class SongGraph:
         """Add a vertex
 
         Preconditions:
-            - 
+            -
         """
         if vertex_id not in self._vertices:
             self._vertices[vertex_id] = _Vertex(
-                vertex_id, name, artist_name, 
-                danceability, energy, key, loudness, 
-                mode, speechiness, acousticness, 
-                instrumentalness, liveness, valence, 
+                vertex_id, name, artist_name,
+                danceability, energy, key, loudness,
+                mode, speechiness, acousticness,
+                instrumentalness, liveness, valence,
                 tempo, track_genre)
 
     def has_vertex(self, vertex_id: str) -> bool:
         """Returns whether the graph contains a vertex with the given vertex_id"""
         return vertex_id in self._vertices
 
-    def add_edge(self, vertex_id1: str, vertex_id2: str, score: float) -> None:
+    def add_edge(self, vertex_id1: str, vertex_id2: str) -> None:
         """Add an edge with a score between the two vertices with the given vertex_ids in this graph.
 
         Raise a ValueError if vertex_id1 or vertex_id2 do not appear as vertices in this graph.
@@ -113,6 +164,7 @@ class SongGraph:
             v1 = self._vertices[vertex_id1]
             v2 = self._vertices[vertex_id2]
 
+            score = v1.get_similarity(v2)
             v1.neighbours[v2] = score
             v2.neighbours[v1] = score
         else:
