@@ -25,15 +25,40 @@ SIMILARITY_WEIGHTING = {
 SCORE_LIMIT = 2.25
 
 class _Vertex:
-    """A Vertex in a graph
+    """A Vertex representing a song in the graph.
+
+    This class stores information about a song, including its ID, name, artists, and various
+    musical attributes. It also tracks the neighbouring vertices (songs) in the graph.
 
     Instance Attributes:
-        - vertex_id: Id of the vertex
-        - name: Name of the song or artist
-        - neighbours: neighbouring vertices mapped to the similarity score between them
+        - vertex_id: A unique identifier for the song.
+        - track_name: The name of the song.
+        - artists: A set of artists associated with the song.
+        - danceability: The danceability score of the song.
+        - energy: The energy level of the song.
+        - key: The musical key of the song (integer).
+        - loudness: The loudness of the song.
+        - mode: The mode (musical scale) of the song (integer).
+        - speechiness: The speechiness score of the song.
+        - acousticness: The acousticness score of the song.
+        - instrumentalness: The instrumentalness score of the song.
+        - liveness: The liveness score of the song.
+        - valence: The valence score of the song.
+        - tempo: The tempo (beats per minute) of the song.
+        - track_genre: The genre of the song.
+        - neighbours: A dictionary mapping neighbouring vertices to their similarity score.
 
-    Representation Invariant:
-        -
+    Representation Invariants:
+        - 0 <= danceability <= 1
+        - 0 <= energy <= 1
+        - 0 <= key <= 12
+        - 0 <= mode <= 6
+        - 0 <= speechiness <= 1
+        - 0 <= acousticness <= 1
+        - 0 <= instrumentalness <= 1
+        - 0 <= liveness <= 1
+        - 0 <= valence <= 1
+        - 0 <= tempo
     """
     vertex_id: str
     track_name: str
@@ -59,8 +84,7 @@ class _Vertex:
         instrumentalness: str, liveness: str, valence: str,
         tempo: str, track_genre: str
     ) -> None:
-        """ Initialize a new vertex
-        """
+        """ Initialize a new vertex"""
         self.vertex_id = vertex_id
         self.name = name
         self.artists = artists
@@ -85,8 +109,7 @@ class _Vertex:
 
     def get_similarity(self, other: _Vertex) -> float:
         """
-        Calculates the similarit score of 2 vertices
-        The formula used is ......
+        Calculates the similarity score of 2 vertices by comparing attributes and providing them with a weighted value.
         """
         score = 0
 
@@ -110,7 +133,7 @@ class _Vertex:
 
         for feature_name, val1, val2, weight in numerical_features:
             if feature_name == "tempo":
-                tempo_diff = abs(val1 - val2) / max(val1, val2)
+                tempo_diff = abs(val1 - val2) / max(val1, val2) if max(val1, val2) > 0 else 0
                 score += weight * tempo_diff ** 2
             else:
                 score += weight * (val1 - val2) ** 2
@@ -120,7 +143,11 @@ class _Vertex:
 
 class SongGraph:
     """
-    abcdefg
+    A graph representing songs and their similarities where each song is a vertex and the edges between
+    vertices indicate the similarity between songs.
+
+    Instance Attributes:
+        - _vertices: A dictionary mapping a song id string (vertex id) with the vertex
     """
     _vertices: dict[str, _Vertex]
 
@@ -138,7 +165,9 @@ class SongGraph:
         """Add a vertex
 
         Preconditions:
-            -
+            - danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness
+                valence, and tempo are strings that can be parsed into floats
+            - tempo and mode are strings that can be parsed into integers
         """
         if vertex_id not in self._vertices:
             self._vertices[vertex_id] = _Vertex(
