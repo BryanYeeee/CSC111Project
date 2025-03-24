@@ -7,6 +7,7 @@ from GenerateGraph import generate_song_graph
 from SongGraph import SongGraph
 
 
+SEARCH_BAR_SPLITTER = " | " # may need this as well in the file wherever the dictionary/list is generated
 class RecommendationSystem:
     """
     Song recommendation system class to generate recommendations.
@@ -15,16 +16,26 @@ class RecommendationSystem:
         - graph: SongGraph object that contains the song graph
     """
     graph: SongGraph
+    song_list_names: list[str]
 
     def __init__(self):
         """
         Initialize the RecommendationSystem class and generate the song graph.
         """
-        self.graph = generate_song_graph()
-
-    def generate_recommendation(self, orig_vertex_id: str, n: int) -> list[str]:
+        self.graph = generate_song_graph() # ** Maybe have this return the song_list_names + a dictionary with vertex_id as the key
+        self.song_list_names = [f'Comedy{SEARCH_BAR_SPLITTER}Gen Hoshino']
+        
+    def obtain_vertex_id(self, given_input: str) -> str:
         """
-        Given the id of a song in the graph, generate n song recommendations that
+        Given a string formatted like "song_name<SEARCH_BAR_SPLITTER>artist_name", return the vertex_id of the song.
+        """
+        song_name, artist_name = given_input.split(SEARCH_BAR_SPLITTER)
+        return "5SuOikwiRyPMVoIQDJUgSV"
+        # TODO: Find the vertex_id based on the song_name and artist_name
+
+    def find_shortest_distance(self, orig_vertex_id: str, n: int) -> list[str, float]:
+        """
+        Given the id of a song in the graph, find n other songs that
         are similar to the song and return their vertex_ids in a list.
 
         Preconditions:
@@ -51,9 +62,20 @@ class RecommendationSystem:
         res = [(key, shortest_distance[key]) for key in shortest_distance]
         res.sort(key=lambda x: x[1])
         print(res)
-        return list([x[0] for x in res[:n]])
+        return res[:n]
 
-
+    def generate_recommendations(self, given_input: str, n: int) -> list[str, str, str]:
+        """
+        Given a song name and artist, return a list of n tuples where the tuple is formatted like 
+        (song_name, artist_name, score).
+        """
+        vertex_id = self.obtain_vertex_id(given_input)
+        shortest_distance = self.find_shortest_distance(vertex_id, n)
+        res = []
+        for other_vertex_id, score in shortest_distance:
+            vertex_details = self.graph.get_vertex_details(other_vertex_id)
+            res.append((vertex_details['name'], '; '.join(vertex_details['artists']), score))
+        return res
 
 if __name__ == '__main__':
     vertex_id = "5SuOikwiRyPMVoIQDJUgSV"

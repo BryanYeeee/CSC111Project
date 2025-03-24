@@ -5,8 +5,11 @@
 import tkinter as tk
 from tkinter import ttk, BooleanVar, Listbox
 
+from RecommendationSystem import RecommendationSystem
+
 # TODO: NEED A LIST OF  ALL SONGS- ARTISTS PRESENT IN THE DATABASE for the autocomplete thing
-song_list_names = []
+recommendation_system = RecommendationSystem()
+song_list_names = recommendation_system.song_list_names
 
 root = tk.Tk()
 root.title("Music Search ahh app")
@@ -145,8 +148,7 @@ def suggest_song() -> None:
     for item in tree.get_children():
         tree.delete(item)
 
-    # TODO: NEED HELP GETTING THE LIST OF SUGGESTIONS - idk which function does that
-    song_list = []
+    song_list = recommendation_system.generate_recommendations(song_input[0], 10)
 
     # Now, we need to update the treeview.
     i = 1
