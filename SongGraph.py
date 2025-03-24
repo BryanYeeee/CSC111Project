@@ -5,6 +5,7 @@ some stuffs
 """
 from __future__ import annotations
 import csv
+from typing import Any
 import networkx as nx
 
 class _Vertex:
@@ -13,26 +14,53 @@ class _Vertex:
     Instance Attributes:
         - vertex_id: Id of the vertex
         - name: Name of the song or artist
-        - kind: type of vertex (either song or artist)
         - neighbours: neighbouring vertices mapped to the similarity score between them
 
     Representation Invariant:
-        - self.kind in {'artist', 'song'}
+        - 
     """
     vertex_id: str
-    name: str
-    kind: str
+    track_name: str
+    artist_name: str
+    danceability: float
+    energy: float
+    key: int
+    loudness: float
+    mode: int
+    speechiness: float
+    acousticness: float
+    instrumentalness: float
+    liveness: float
+    valence: float
+    tempo: float
+    track_genre: str
     neighbours: dict[_Vertex, float]
 
-    def __init__(self, vertex_id: str, name: str, kind: str) -> None:
+    def __init__(
+        self, vertex_id: str, name: str, artist_name: str,
+        danceability: float, energy: float, key: int, loudness: float,
+        mode: int, speechiness: float, acousticness: float,
+        instrumentalness: float, liveness: float, valence: float,
+        tempo: float, track_genre: str
+    ) -> None:
         """ Initialize a new vertex
-
-        Preconditions:
-            - self.kind in {"song", "artist"}
         """
         self.vertex_id = vertex_id
         self.name = name
-        self.kind = kind
+        self.artist_name = artist_name
+        self.danceability = danceability
+        self.energy = energy
+        self.key = key
+        self.loudness = loudness
+        self.mode = mode
+        self.speechiness = speechiness
+        self.acousticness = acousticness
+        self.instrumentalness = instrumentalness
+        self.liveness = liveness
+        self.valence = valence
+        self.tempo = tempo
+        self.track_genre = track_genre
+        
         self.neighbours = {}
 
     def degree(self) -> int:
@@ -49,14 +77,25 @@ class SongGraph:
         """Initialize an empty graph"""
         self._vertices = {}
 
-    def add_vertex(self, vertex_id: str, name: str, kind: str) -> None:
+    def add_vertex(
+        self, vertex_id: str, name: str, artist_name: str,
+        danceability: float, energy: float, key: int, loudness: float,
+        mode: int, speechiness: float, acousticness: float,
+        instrumentalness: float, liveness: float, valence: float,
+        tempo: float, track_genre: str
+    ) -> None:
         """Add a vertex
 
         Preconditions:
-            - kind in {'artist', 'song'}
+            - 
         """
         if vertex_id not in self._vertices:
-            self._vertices[vertex_id] = _Vertex(vertex_id, name, kind)
+            self._vertices[vertex_id] = _Vertex(
+                vertex_id, name, artist_name, 
+                danceability, energy, key, loudness, 
+                mode, speechiness, acousticness, 
+                instrumentalness, liveness, valence, 
+                tempo, track_genre)
 
     def has_vertex(self, vertex_id: str) -> bool:
         """Returns whether the graph contains a vertex with the given vertex_id"""
@@ -90,31 +129,43 @@ class SongGraph:
         else:
             return False
 
-    def get_neighbours(self, vertex_id: str) -> set:
-        """Return a set of the neighbours of the given vertex_id.
-
-        Note that the *vertex_ids* are returned, not the _Vertex objects themselves.
+    def get_neighbours(self, vertex_id: str) -> dict[str, float]:
+        """Return a dictionary of the neighbours to similarity score of the given vertex_id.
 
         Raise a ValueError if vertex_id does not appear as a vertex in this graph.
         """
         if vertex_id in self._vertices:
             v = self._vertices[vertex_id]
-            return {neighbour.vertex_id for neighbour in v.neighbours}
+            return {neighbour.vertex_id: v.neighbours[neighbour] for neighbour in v.neighbours}
         else:
             raise ValueError
 
-    def get_all_vertices(self, kind: str = '') -> set:
+    def get_all_vertices(self) -> set:
         """Return a set of all vertex vertex_ids in this graph.
-
-        If kind != '', only return the vertex_ids of the given vertex kind.
-
-        Preconditions:
-            - kind in {'', 'artist', 'song'}
         """
-        if kind != '':
-            return {v.vertex_id for v in self._vertices.values() if v.kind == kind}
-        else:
-            return set(self._vertices.keys())
+        return set(self._vertices.keys())
+
+    def get_vertex_details(self, vertex_id: str) -> dict[str, Any]:
+        """
+        Given a vertex_id id, return the details of the vertex
+        """
+        vertex = self._vertices[vertex_id]
+        return {
+            'name': vertex.name,
+            'artist_name': vertex.artist_name,
+            'danceability': vertex.danceability,
+            'energy': vertex.energy,
+            'key': vertex.key,
+            'loudness': vertex.loudness,
+            'mode': vertex.mode,
+            'speechiness': vertex.speechiness,
+            'acousticness': vertex.acousticness,
+            'instrumentalness': vertex.instrumentalness,
+            'liveness': vertex.liveness,
+            'valence': vertex.valence,
+            'tempo': vertex.tempo,
+            'track_genre': vertex.track_genre
+        }
 
     def to_networkx(self, max_vertices: int = 5000) -> nx.Graph:
         """Convert this graph into a networkx Graph.
@@ -126,11 +177,11 @@ class SongGraph:
         """
         graph_nx = nx.Graph()
         for v in self._vertices.values():
-            graph_nx.add_node(v.vertex_id, kind=v.kind)
+            graph_nx.add_node(v.vertex_id)
 
             for u in v.neighbours:
                 if graph_nx.number_of_nodes() < max_vertices:
-                    graph_nx.add_node(u.vertex_id, kind=u.kind)
+                    graph_nx.add_node(u.vertex_id)
 
                 if u.vertex_id in graph_nx.nodes:
                     graph_nx.add_edge(v.vertex_id, u.vertex_id)
