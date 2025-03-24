@@ -17,7 +17,11 @@ root.columnconfigure(1, weight=3)
 root.rowconfigure(0, weight=1)
 
 style = ttk.Style(root)
-# TODO: import forest style
+# Import the tcl file
+root.tk.call("source", "forest-dark.tcl")
+
+# Set the theme with the theme_use method
+style.theme_use("forest-dark")
 style.configure("Treeview", font=("Helvetica", 17), rowheight=25)
 
 # Frame for the IO interface
