@@ -23,9 +23,10 @@ def generate_song_graph() -> SongGraph:
         for row in reader:
             artists = row[2].split(";")
             new_graph.add_vertex(
-                row[1], row[4], artists, row[8], row[9], row[10], 
-                row[11], row[12], row[13], row[14], row[15], row[16], 
+                row[1], row[4], artists, row[8], row[9], row[10],
+                row[11], row[12], row[13], row[14], row[15], row[16],
                 row[17], row[18], row[20])
+
             limit = limit - 1
             if limit == TESTING_LIMIT/2:
                 break
@@ -35,8 +36,8 @@ def generate_song_graph() -> SongGraph:
         next(reader)
         for row in reader:
             new_graph.add_vertex(
-                row[0], row[1], row[2], row[11], row[12], row[13], 
-                row[14], row[15], row[16], row[17], row[18], row[19], 
+                row[0], row[1], row[2], row[11], row[12], row[13],
+                row[14], row[15], row[16], row[17], row[18], row[19],
                 row[20], row[21], row[9])
 
             limit = limit - 1
@@ -48,5 +49,8 @@ def generate_song_graph() -> SongGraph:
 
 if __name__ == '__main__':
     g=generate_song_graph()
+    print(g.get_average_edges())
+    print(len(g._vertices["5SuOikwiRyPMVoIQDJUgSV"].neighbours))
     print(len(g._vertices))
+    # print(len(g._vertices))
     visualize_graph(g)

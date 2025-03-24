@@ -21,6 +21,8 @@ SIMILARITY_WEIGHTING = {
     "instrumentalness": 0.7,
     "liveness": 0.4
 }
+# The max limit at which a similarity score can be in order to add an edge
+SCORE_LIMIT = 2.25
 
 class _Vertex:
     """A Vertex in a graph
@@ -113,8 +115,7 @@ class _Vertex:
             else:
                 score += weight * (val1 - val2) ** 2
 
-        similarity = 1 / (1 + score)
-        return similarity
+        return score
 
 
 class SongGraph:
@@ -141,17 +142,27 @@ class SongGraph:
         """
         if vertex_id not in self._vertices:
             self._vertices[vertex_id] = _Vertex(
-                vertex_id, name, artists, 
-                danceability, energy, key, loudness, 
-                mode, speechiness, acousticness, 
-                instrumentalness, liveness, valence, 
+                vertex_id, name, artists,
+                danceability, energy, key, loudness,
+                mode, speechiness, acousticness,
+                instrumentalness, liveness, valence,
                 tempo, track_genre)
+            self.generate_edges(vertex_id)
 
-    def has_vertex(self, vertex_id: str) -> bool:
-        """Returns whether the graph contains a vertex with the given vertex_id"""
-        return vertex_id in self._vertices
+    def generate_edges(self, vertex_id1: str) -> None:
+        """Add edges to this vertex based on the similarity score of other vertices
 
-    def add_edge(self, vertex_id1: str, vertex_id2: str) -> None:
+        Preconditions:
+            - vertex_id1 in self._vertices
+        """
+        v1 = self._vertices[vertex_id1]
+        for vertex_id2 in self._vertices:
+            if vertex_id1 != vertex_id2:
+                score = v1.get_similarity(self._vertices[vertex_id2])
+                if score < SCORE_LIMIT:
+                    self.add_edge(vertex_id1, vertex_id2, score)
+
+    def add_edge(self, vertex_id1: str, vertex_id2: str, score: float) -> None:
         """Add an edge with a score between the two vertices with the given vertex_ids in this graph.
 
         Raise a ValueError if vertex_id1 or vertex_id2 do not appear as vertices in this graph.
@@ -163,11 +174,14 @@ class SongGraph:
             v1 = self._vertices[vertex_id1]
             v2 = self._vertices[vertex_id2]
 
-            score = v1.get_similarity(v2)
             v1.neighbours[v2] = score
             v2.neighbours[v1] = score
         else:
             raise ValueError
+
+    def has_vertex(self, vertex_id: str) -> bool:
+        """Returns whether the graph contains a vertex with the given vertex_id"""
+        return vertex_id in self._vertices
 
     def adjacent(self, vertex_id1: str, vertex_id2: str) -> bool:
         """Return whether vertex_id1 and vertex_id2 are adjacent vertices in this graph.
@@ -217,6 +231,12 @@ class SongGraph:
             'tempo': vertex.tempo,
             'track_genre': vertex.track_genre
         }
+
+    def get_average_edges(self) -> float:
+        """Returns the average number of edges per vertex.
+        Used to decide a value for the SCORE_LIMIT constant
+        """
+        return sum(len(self._vertices[vid].neighbours) for vid in self._vertices)/(len(self._vertices))
 
     def to_networkx(self, max_vertices: int = 5000) -> nx.Graph:
         """Convert this graph into a networkx Graph.
