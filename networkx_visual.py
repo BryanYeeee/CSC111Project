@@ -36,7 +36,7 @@ COLOUR_SCHEME = [
 
 LINE_COLOUR = 'rgb(210,210,210)'
 VERTEX_BORDER_COLOUR = 'rgb(50, 50, 50)'
-BOOK_COLOUR = 'rgb(89, 205, 105)'
+COLOR = 'rgb(89, 205, 105)'
 USER_COLOUR = 'rgb(105, 89, 205)'
 
 
@@ -59,9 +59,8 @@ def visualize_graph(graph: SongGraph.SongGraph,
     x_values = [pos[k][0] for k in graph_nx.nodes]
     y_values = [pos[k][1] for k in graph_nx.nodes]
     labels = list(graph_nx.nodes)
-    kinds = [graph_nx.nodes[k]['kind'] for k in graph_nx.nodes]
 
-    colours = [BOOK_COLOUR if kind == 'book' else USER_COLOUR for kind in kinds]
+    colours = [COLOR]
 
     x_edges = []
     y_edges = []
@@ -133,7 +132,7 @@ def visualize_graph_clusters(graph: SongGraph.SongGraph, clusters: list[set],
                 colors.append(COLOUR_SCHEME[i % len(COLOUR_SCHEME)])
                 break
         else:
-            colors.append(BOOK_COLOUR)
+            colors.append(COLOR)
 
     x_edges = []
     y_edges = []

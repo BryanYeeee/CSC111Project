@@ -4,7 +4,6 @@ some stuffs
 
 """
 from __future__ import annotations
-import csv
 from typing import Any
 import networkx as nx
 
@@ -36,7 +35,7 @@ class _Vertex:
     """
     vertex_id: str
     track_name: str
-    artist_name: str
+    artists: set[str]
     danceability: float
     energy: float
     key: int
@@ -52,28 +51,28 @@ class _Vertex:
     neighbours: dict[_Vertex, float]
 
     def __init__(
-        self, vertex_id: str, name: str, artist_name: str,
-        danceability: float, energy: float, key: int, loudness: float,
-        mode: int, speechiness: float, acousticness: float,
-        instrumentalness: float, liveness: float, valence: float,
-        tempo: float, track_genre: str
+        self, vertex_id: str, name: str, artists: set[str],
+        danceability: str, energy: str, key: str, loudness: str,
+        mode: int, speechiness: str, acousticness: str,
+        instrumentalness: str, liveness: str, valence: str,
+        tempo: str, track_genre: str
     ) -> None:
         """ Initialize a new vertex
         """
         self.vertex_id = vertex_id
         self.name = name
-        self.artist_name = artist_name
-        self.danceability = danceability
-        self.energy = energy
-        self.key = key
-        self.loudness = loudness
-        self.mode = mode
-        self.speechiness = speechiness
-        self.acousticness = acousticness
-        self.instrumentalness = instrumentalness
-        self.liveness = liveness
-        self.valence = valence
-        self.tempo = tempo
+        self.artists = artists
+        self.danceability = float(danceability)
+        self.energy = float(energy)
+        self.key = int(key)
+        self.loudness = float(loudness)
+        self.mode = int(mode)
+        self.speechiness = float(speechiness)
+        self.acousticness = float(acousticness)
+        self.instrumentalness = float(instrumentalness)
+        self.liveness = float(liveness)
+        self.valence = float(valence)
+        self.tempo = float(tempo)
         self.track_genre = track_genre
 
         self.neighbours = {}
@@ -129,11 +128,11 @@ class SongGraph:
         self._vertices = {}
 
     def add_vertex(
-        self, vertex_id: str, name: str, artist_name: str,
-        danceability: float, energy: float, key: int, loudness: float,
-        mode: int, speechiness: float, acousticness: float,
-        instrumentalness: float, liveness: float, valence: float,
-        tempo: float, track_genre: str
+        self, vertex_id: str, name: str, artists: set[str],
+        danceability: str, energy: str, key: str, loudness: str,
+        mode: str, speechiness: str, acousticness: str,
+        instrumentalness: str, liveness: str, valence: str,
+        tempo: str, track_genre: str
     ) -> None:
         """Add a vertex
 
@@ -142,10 +141,10 @@ class SongGraph:
         """
         if vertex_id not in self._vertices:
             self._vertices[vertex_id] = _Vertex(
-                vertex_id, name, artist_name,
-                danceability, energy, key, loudness,
-                mode, speechiness, acousticness,
-                instrumentalness, liveness, valence,
+                vertex_id, name, artists, 
+                danceability, energy, key, loudness, 
+                mode, speechiness, acousticness, 
+                instrumentalness, liveness, valence, 
                 tempo, track_genre)
 
     def has_vertex(self, vertex_id: str) -> bool:
@@ -204,7 +203,7 @@ class SongGraph:
         vertex = self._vertices[vertex_id]
         return {
             'name': vertex.name,
-            'artist_name': vertex.artist_name,
+            'artists': vertex.artists,
             'danceability': vertex.danceability,
             'energy': vertex.energy,
             'key': vertex.key,
