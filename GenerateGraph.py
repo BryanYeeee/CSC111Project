@@ -9,6 +9,20 @@ DATASET_NAME_1 = "datasets/kaggle_spotify_songs_1.csv"
 DATASET_NAME_2 = "datasets/kaggle_spotify_songs_2.csv"
 TESTING_LIMIT = 550
 
+BASE_GENRES = {"pop", "rock"}
+SAME_GENRES = {"rap": "hip-hop", "songwriter": "singer-songwriter", "r&b": "r-n-b"}
+
+def filter_genre(genre: str) -> str:  
+    """
+    Given a genre, filter it to a base or common genre if possible.
+    """  
+    if genre in SAME_GENRES:
+        return SAME_GENRES[genre]
+    for base_genre in BASE_GENRES:
+        if base_genre in genre:
+            return base_genre
+    return genre
+
 
 def generate_song_graph() -> SongGraph:
     """
@@ -27,8 +41,7 @@ def generate_song_graph() -> SongGraph:
             new_graph.add_vertex(
                 row[1], row[4], artists, row[8], row[9], row[10],
                 row[11], row[12], row[13], row[14], row[15], row[16],
-                row[17], row[18], row[20])
-
+                row[17], row[18], filter_genre(row[20]))
             limit = limit - 1
             if limit == TESTING_LIMIT / 2:
                 break
@@ -40,8 +53,7 @@ def generate_song_graph() -> SongGraph:
             new_graph.add_vertex(
                 row[0], row[1], row[2], row[11], row[12], row[13],
                 row[14], row[15], row[16], row[17], row[18], row[19],
-                row[20], row[21], row[9])
-
+                row[20], row[21], filter_genre(row[9]))
             limit = limit - 1
             if limit == 0:
                 break
