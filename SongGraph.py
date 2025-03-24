@@ -3,6 +3,7 @@
 some stuffs
 
 """
+from __future__ import annotations
 import csv
 from typing import Any
 import networkx as nx
@@ -18,7 +19,7 @@ class _Vertex:
     """
     item: Any
     kind: str
-    neighbours: set[_Vertex]
+    neighbours: dict[_Vertex, float]
 
     def __init__(self, item: Any, kind: str) -> None:
         """ Initialize a new vertex
@@ -28,7 +29,7 @@ class _Vertex:
         """
         self.item = item
         self.kind = kind
-        self.neighbours = set()
+        self.neighbours = {}
 
     def degree(self) -> int:
         """Return the degree of this vertex"""
@@ -57,8 +58,8 @@ class SongGraph:
         """Returns whether the graph contains a vertex with the given item"""
         return item in self._vertices
 
-    def add_edge(self, item1: Any, item2: Any) -> None:
-        """Add an edge between the two vertices with the given items in this graph.
+    def add_edge(self, item1: Any, item2: Any, score: float) -> None:
+        """Add an edge with a score between the two vertices with the given items in this graph.
 
         Raise a ValueError if item1 or item2 do not appear as vertices in this graph.
 
@@ -69,8 +70,8 @@ class SongGraph:
             v1 = self._vertices[item1]
             v2 = self._vertices[item2]
 
-            v1.neighbours.add(v2)
-            v2.neighbours.add(v1)
+            v1.neighbours[v2] = score
+            v2.neighbours[v1] = score
         else:
             raise ValueError
 
