@@ -3,32 +3,37 @@
 some stuffs
 
 """
+from __future__ import annotations
 import csv
-from typing import Any
 import networkx as nx
 
 class _Vertex:
     """A Vertex in a graph
 
     Instance Attributes:
-        -
+        - vertex_id: Id of the vertex
+        - name: Name of the song or artist
+        - kind: type of vertex (either song or artist)
+        - neighbours: neighbouring vertices mapped to the similarity score between them
 
     Representation Invariant:
-        -
+        - self.kind in {'artist', 'song'}
     """
-    item: Any
+    vertex_id: str
+    name: str
     kind: str
-    neighbours: set[_Vertex]
+    neighbours: dict[_Vertex, float]
 
-    def __init__(self, item: Any, kind: str) -> None:
+    def __init__(self, vertex_id: str, name: str, kind: str) -> None:
         """ Initialize a new vertex
 
         Preconditions:
-            - kind in {"song", "artist"}
+            - self.kind in {"song", "artist"}
         """
-        self.item = item
+        self.vertex_id = vertex_id
+        self.name = name
         self.kind = kind
-        self.neighbours = set()
+        self.neighbours = {}
 
     def degree(self) -> int:
         """Return the degree of this vertex"""
@@ -38,76 +43,76 @@ class SongGraph:
     """
     abcdefg
     """
-    _vertices: dict[Any, _Vertex]
+    _vertices: dict[str, _Vertex]
 
     def __init__(self) -> None:
         """Initialize an empty graph"""
         self._vertices = {}
 
-    def add_vertex(self, item: Any, kind: str) -> None:
+    def add_vertex(self, vertex_id: str, name: str, kind: str) -> None:
         """Add a vertex
 
         Preconditions:
-            - kind in {'user', 'book'}
+            - kind in {'artist', 'song'}
         """
-        if item not in self._vertices:
-            self._vertices[item] = _Vertex(item, kind)
+        if vertex_id not in self._vertices:
+            self._vertices[vertex_id] = _Vertex(vertex_id, name, kind)
 
-    def has_vertex(self, item: Any) -> bool:
-        """Returns whether the graph contains a vertex with the given item"""
-        return item in self._vertices
+    def has_vertex(self, vertex_id: str) -> bool:
+        """Returns whether the graph contains a vertex with the given vertex_id"""
+        return vertex_id in self._vertices
 
-    def add_edge(self, item1: Any, item2: Any) -> None:
-        """Add an edge between the two vertices with the given items in this graph.
+    def add_edge(self, vertex_id1: str, vertex_id2: str, score: float) -> None:
+        """Add an edge with a score between the two vertices with the given vertex_ids in this graph.
 
-        Raise a ValueError if item1 or item2 do not appear as vertices in this graph.
+        Raise a ValueError if vertex_id1 or vertex_id2 do not appear as vertices in this graph.
 
         Preconditions:
-            - item1 != item2
+            - vertex_id1 != vertex_id2
         """
-        if item1 in self._vertices and item2 in self._vertices:
-            v1 = self._vertices[item1]
-            v2 = self._vertices[item2]
+        if vertex_id1 in self._vertices and vertex_id2 in self._vertices:
+            v1 = self._vertices[vertex_id1]
+            v2 = self._vertices[vertex_id2]
 
-            v1.neighbours.add(v2)
-            v2.neighbours.add(v1)
+            v1.neighbours[v2] = score
+            v2.neighbours[v1] = score
         else:
             raise ValueError
 
-    def adjacent(self, item1: Any, item2: Any) -> bool:
-        """Return whether item1 and item2 are adjacent vertices in this graph.
+    def adjacent(self, vertex_id1: str, vertex_id2: str) -> bool:
+        """Return whether vertex_id1 and vertex_id2 are adjacent vertices in this graph.
 
-        Return False if item1 or item2 do not appear as vertices in this graph.
+        Return False if vertex_id1 or vertex_id2 do not appear as vertices in this graph.
         """
-        if item1 in self._vertices and item2 in self._vertices:
-            v1 = self._vertices[item1]
-            return any(v2.item == item2 for v2 in v1.neighbours)
+        if vertex_id1 in self._vertices and vertex_id2 in self._vertices:
+            v1 = self._vertices[vertex_id1]
+            return any(v2.vertex_id == vertex_id2 for v2 in v1.neighbours)
         else:
             return False
 
-    def get_neighbours(self, item: Any) -> set:
-        """Return a set of the neighbours of the given item.
+    def get_neighbours(self, vertex_id: str) -> set:
+        """Return a set of the neighbours of the given vertex_id.
 
-        Note that the *items* are returned, not the _Vertex objects themselves.
+        Note that the *vertex_ids* are returned, not the _Vertex objects themselves.
 
-        Raise a ValueError if item does not appear as a vertex in this graph.
+        Raise a ValueError if vertex_id does not appear as a vertex in this graph.
         """
-        if item in self._vertices:
-            v = self._vertices[item]
-            return {neighbour.item for neighbour in v.neighbours}
+        if vertex_id in self._vertices:
+            v = self._vertices[vertex_id]
+            return {neighbour.vertex_id for neighbour in v.neighbours}
         else:
             raise ValueError
 
     def get_all_vertices(self, kind: str = '') -> set:
-        """Return a set of all vertex items in this graph.
+        """Return a set of all vertex vertex_ids in this graph.
 
-        If kind != '', only return the items of the given vertex kind.
+        If kind != '', only return the vertex_ids of the given vertex kind.
 
         Preconditions:
-            - kind in {'', 'user', 'book'}
+            - kind in {'', 'artist', 'song'}
         """
         if kind != '':
-            return {v.item for v in self._vertices.values() if v.kind == kind}
+            return {v.vertex_id for v in self._vertices.values() if v.kind == kind}
         else:
             return set(self._vertices.keys())
 
@@ -121,14 +126,14 @@ class SongGraph:
         """
         graph_nx = nx.Graph()
         for v in self._vertices.values():
-            graph_nx.add_node(v.item, kind=v.kind)
+            graph_nx.add_node(v.vertex_id, kind=v.kind)
 
             for u in v.neighbours:
                 if graph_nx.number_of_nodes() < max_vertices:
-                    graph_nx.add_node(u.item, kind=u.kind)
+                    graph_nx.add_node(u.vertex_id, kind=u.kind)
 
-                if u.item in graph_nx.nodes:
-                    graph_nx.add_edge(v.item, u.item)
+                if u.vertex_id in graph_nx.nodes:
+                    graph_nx.add_edge(v.vertex_id, u.vertex_id)
 
             if graph_nx.number_of_nodes() >= max_vertices:
                 break
