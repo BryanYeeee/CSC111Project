@@ -435,27 +435,31 @@ slider_tempo.config(command=update_tempo_label)
 genre_label = ttk.Label(dt_widget, text="Genre")
 genre_label.grid(row=10, column=1, padx=5, pady=5, sticky="w")
 
-genres = ['guitar', 'goth', 'children', 'grunge', 'latin', 'comedy', 'j-dance', 'british', 'pagode', 'alt-rock',
-          'hardstyle', 'detroit-techno', 'indie-pop', 'tango', 'garage', 'singer-songwriter', 'idm', 'country',
-          'r-n-b', 'new-age', 'club', 'r&b', 'punk-rock', 'reggae', 'disco', 'black-metal', 'hardcore', 'j-rock',
-          'sleep', 'edm', 'death-metal', 'indian', 'samba', 'romance', 'turkish', 'dancehall', 'disney', 'pop', 'punk',
-          'happy', 'study', 'groove', 'dance', 'j-pop', 'german', 'rock', 'reggaeton', 'breakbeat', 'hip-hop', 'dub',
-          'show-tunes', 'trip-hop', 'funk', 'deep-house', 'trance', 'rock-n-roll', 'heavy-metal', 'classical', 'salsa',
-          'house', 'dubstep', 'acoustic', 'ska', 'hard-rock', 'rap', 'alternative', 'sertanejo', 'pop-film',
-          'power-pop', 'techno', 'party', 'industrial', 'metalcore', 'french', 'chill', 'forro', 'electro', 'spanish',
-          'malay', 'metal', 'blues', 'minimal-techno', 'emo', 'world-music', 'jazz', 'anime', 'cantopop', 'soul',
-          'swedish', 'j-idol', 'mandopop', 'iranian', 'honky-tonk', 'songwriter', 'grindcore', 'ambient', 'kids',
-          'electronic', 'sad', 'brazil', 'afrobeat', 'mpb', 'k-pop', 'indie', 'folk', 'bluegrass', 'psych-rock',
-          'latino', 'synth-pop', 'drum-and-bass', 'opera', 'gospel', 'rockabilly', 'piano', 'chicago-house',
-          'progressive-house']
+genres = ['Acoustic', 'Afrobeat', 'Alt-rock', 'Alternative', 'Ambient', 'Anime', 'Black-metal', 'Bluegrass', 'Blues',
+          'Brazil', 'Breakbeat', 'British', 'Cantopop', 'Chicago-house', 'Children', 'Chill', 'Classical', 'Club',
+          'Comedy', 'Country', 'Dance', 'Dancehall', 'Death-metal', 'Deep-house', 'Detroit-techno', 'Disco', 'Disney',
+          'Drum-and-bass', 'Dub', 'Dubstep', 'Edm', 'Electro', 'Electronic', 'Emo', 'Folk', 'Forro', 'French', 'Funk',
+          'Garage', 'German', 'Gospel', 'Goth', 'Grindcore', 'Groove', 'Grunge', 'Guitar', 'Happy', 'Hard-rock',
+          'Hardcore', 'Hardstyle', 'Heavy-metal', 'Hip-hop', 'Honky-tonk', 'House', 'Idm', 'Indian', 'Indie',
+          'Indie-pop', 'Industrial', 'Iranian', 'J-dance', 'J-idol', 'J-pop', 'J-rock', 'Jazz', 'K-pop', 'Kids',
+          'Latin', 'Latino', 'Malay', 'Mandopop', 'Metal', 'Metalcore', 'Minimal-techno', 'Mpb', 'New-age', 'Opera',
+          'Pagode', 'Party', 'Piano', 'Pop', 'Pop-film', 'Power-pop', 'Progressive-house', 'Psych-rock', 'Punk',
+          'Punk-rock', 'R&b', 'R-n-b', 'Rap', 'Reggae', 'Reggaeton', 'Rock', 'Rock-n-roll', 'Rockabilly', 'Romance',
+          'Sad', 'Salsa', 'Samba', 'Sertanejo', 'Show-tunes', 'Singer-songwriter', 'Ska', 'Sleep', 'Songwriter',
+          'Soul', 'Spanish', 'Study', 'Swedish', 'Synth-pop', 'Tango', 'Techno', 'Trance', 'Trip-hop', 'Turkish',
+          'World-music']
 
 genre_name = ttk.Combobox(dt_widget, values=genres, state="readonly", width=30)
 genre_name.grid(row=11, column=1, padx=5, pady=5, sticky="w")
 
 
+# TODO: ADD DECISION TREE STUFF FROM BACKEND
 def get_slider():
     """
-    negus
+        Gets the value from all the attribute sliders + genre name
+        All the values range from 0 to 5
+        Multiplies the value with the range of the attribute given in SongGraph.py
+        Cretes a list for these values
     """
 
     slider_value = [
@@ -472,7 +476,8 @@ def get_slider():
         int(slider_tempo.get()),
     ]
 
-    attribute_range = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 250]
+    # u can modify this as needed to get the values
+    attribute_range = [1, 1, 1, -10, 1, 1, 1, 1, 1, 1, 250]
 
     final_value = []
 
@@ -480,8 +485,8 @@ def get_slider():
         assert len(slider_value) == len(attribute_range)
         attribute = (slider_value[i] / 10) * attribute_range[i]
         final_value.append(attribute)
-
-    print(final_value + [genre_name.get()])
+    # change this to whatever the decision tree needs
+    print(final_value + [genre_name.get().lower()])
 
 
 accent_button_slider = ttk.Button(dt_widget, text="Recommend New Songs!", style="Accent.TButton",
@@ -607,4 +612,3 @@ root.geometry("+{}+{}".format(x_cordinate, y_cordinate))
 
 # initialize the window
 root.mainloop()
-
