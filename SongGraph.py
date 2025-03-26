@@ -52,8 +52,8 @@ class _Vertex:
     Representation Invariants:
         - 0 <= danceability <= 1
         - 0 <= energy <= 1
-        - 0 <= key <= 12
-        - 0 <= mode <= 6
+        - 0 <= key <= 11
+        - 0 <= mode <= 1
         - 0 <= speechiness <= 1
         - 0 <= acousticness <= 1
         - 0 <= instrumentalness <= 1
