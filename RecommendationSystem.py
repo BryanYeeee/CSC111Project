@@ -1,11 +1,8 @@
 """
 This module contains the RecommendationSystem class, which generates song recommendations.
 """
-from GenerateGraph import generate_song_graph
+from GenerateGraph import generate_song_graph, SEARCH_BAR_SPLITTER
 from SongGraph import SongGraph
-
-SEARCH_BAR_SPLITTER = "｜"  # may need this as well in the file wherever the dictionary/list is generated
-
 
 class RecommendationSystem:
     """
@@ -16,7 +13,7 @@ class RecommendationSystem:
         - song_list_names: a dictionary mapping song names to its vertex id in graph
     """
     graph: SongGraph
-    song_list_names: dir[str: str]
+    song_list_names: dict[str: str]
 
     def __init__(self):
         """
@@ -28,9 +25,7 @@ class RecommendationSystem:
         """
         Given a string formatted like "song_name<SEARCH_BAR_SPLITTER>artist_name", return the vertex_id of the song.
         """
-        song_name, artist_name = given_input.split(SEARCH_BAR_SPLITTER)
-        return "5SuOikwiRyPMVoIQDJUgSV"
-        # TODO: Find the vertex_id based on the song_name and artist_name
+        return self.song_list_names[given_input]
 
     def generate_recommendations(self, given_input: str, n: int) -> list[str, str, str]:
         """

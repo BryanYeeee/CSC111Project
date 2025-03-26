@@ -7,9 +7,8 @@ from tkinter import ttk, BooleanVar, Listbox
 
 from RecommendationSystem import RecommendationSystem
 
-# TODO: NEED A LIST OF  ALL SONGS- ARTISTS PRESENT IN THE DATABASE for the autocomplete thing
 recommendation_system = RecommendationSystem()
-song_list_names = recommendation_system.song_list_names
+song_list_names = list(recommendation_system.song_list_names.keys())
 
 root = tk.Tk()
 root.title("Music Search ahh app")
