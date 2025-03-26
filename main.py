@@ -3,7 +3,8 @@
 """
 
 import tkinter as tk
-from tkinter import ttk, BooleanVar, Listbox
+from tkinter import ttk, IntVar, Listbox
+
 
 from RecommendationSystem import RecommendationSystem
 
@@ -30,7 +31,6 @@ style.configure("Treeview", font=("Helvetica", 17), rowheight=25)
 widgets_frame = ttk.Frame(root, padding=(0, 0, 0, 10))
 widgets_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 widgets_frame.columnconfigure(0, weight=1)
-
 
 # Entry field
 placeholder_text = "Enter song name here:"
@@ -69,7 +69,6 @@ listbox_frame.grid(row=1, column=0, pady=10, sticky="nsew")
 v_scrollbar = ttk.Scrollbar(listbox_frame, orient="vertical")
 h_scrollbar = ttk.Scrollbar(listbox_frame, orient="horizontal")
 
-
 my_list = Listbox(
     listbox_frame,
     width=50,
@@ -79,7 +78,6 @@ my_list = Listbox(
     yscrollcommand=v_scrollbar.set,
     xscrollcommand=h_scrollbar.set
 )
-
 
 v_scrollbar.config(command=my_list.yview)
 h_scrollbar.config(command=my_list.xview)
@@ -141,7 +139,7 @@ tree.heading("Score", text="Score")
 
 tree.column("Title", width=300, anchor="w")
 tree.column("Artist", width=150, anchor="center")
-tree.column("Score", width=100, anchor="center")
+tree.column("Score", width=100, anchor="e")
 
 tree.pack(expand=True, fill="both")
 tree.tag_configure('even', background='#191c1a')
@@ -186,11 +184,31 @@ def suggest_song() -> None:
 
     # Now, we need to update the treeview.
     i = 1
+    print(song_list)
+    best_score = song_list[00][2]
+    print(best_score)
+
+    def star(value: int) -> str:
+        """
+            converts the score to a star based rating
+            within 50% greater than the best score: 3 stars
+            between 50 to 75%: 2 stars
+            more than 75%: 1 star
+        """
+        threshold_excellent = best_score * 1.5
+        threshold_good = best_score * 1.75
+
+        if value <= threshold_excellent:
+            return "⭐⭐⭐️"
+        elif value <= threshold_good:
+            return "⭐⭐"
+        else:
+            return "⭐"
+
     for item in song_list:
         tag = 'even' if i % 2 == 0 else 'odd'
-        tree.insert("", "end", values=(item[0], item[1], item[2]), tags=(tag,))
+        tree.insert("", "end", values=(item[0], item[1], star(item[2])), tags=(tag,))
         i += 1
-
 
 
 # Recommend button
