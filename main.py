@@ -11,7 +11,7 @@ recommendation_system = RecommendationSystem()
 song_list_names = list(recommendation_system.song_list_names.keys())
 
 root = tk.Tk()
-root.title("Music Search ahh app")
+root.title("🎶")
 root.option_add("*tearOff", False)
 
 # root.columnconfigure(0, weight=1)
