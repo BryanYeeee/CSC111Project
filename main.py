@@ -112,6 +112,8 @@ def fill_entry(_) -> None:
         fill up the search bar with the selected song from my_list
     """
     selected_index = my_list.curselection()
+    if not selected_index:
+        return
     song = my_list.get(selected_index)
     entry.delete(0, "end")
     entry.insert(0, song)
@@ -139,13 +141,78 @@ entry.bind("<KeyRelease>", check)
 
 my_list.bind("<<ListboxSelect>>", fill_entry)
 
-# Tab 2 - Empty
+# Tab 2 - Webscraping
 tab2 = ttk.Frame(tabs)
-tabs.add(tab2, text="WebScrape")
+tabs.add(tab2, text="WebSearch")
 
-# Tab 3 - Empty
+web_widgets = ttk.Frame(tab2, padding=(0, 0, 0, 10))
+web_widgets.pack(padx=10, pady=10, fill="both", expand=True)
+
+# Entry field
+placeholder_text = "Enter song name here:"
+entry_web = ttk.Entry(web_widgets, foreground="white")
+entry_web.insert(0, placeholder_text)
+entry_web.grid(row=0, column=0, padx=5, pady=(5, 2), sticky="ew")
+
+
+def on_click_web(_) -> None:
+    """
+        Changes the input text to white so that it is easier for user to see what they are typing.
+    """
+    if entry_web.get() == placeholder_text:
+        entry_web.delete(0, tk.END)
+        entry_web.configure(foreground="white")
+
+
+def on_focus_out_web(_) -> None:
+    """
+        Changes the input text to gray again after checking that there is no possible input.
+    """
+    if entry_web.get() == "":
+        entry_web.insert(0, placeholder_text)
+        entry_web.configure(foreground="grey")
+
+
+entry_web.bind("<FocusIn>", on_click_web)
+entry_web.bind("<FocusOut>", on_focus_out_web)
+
+# Tab 3 - Decision Tree
 tab3 = ttk.Frame(tabs)
-tabs.add(tab3, text="Decision Tree")
+tabs.add(tab3, text="Custom!")
+
+dt_widget = ttk.Frame(tab3, padding=(0, 0, 0, 10))
+dt_widget.columnconfigure(0, weight=1)
+dt_widget.columnconfigure(1, weight=1)
+
+dt_widget.pack(padx=10, pady=10, fill="both", expand=True)
+
+# dance slider
+slider_dance_label = ttk.Label(dt_widget, text="Dancebility: 5")
+slider_dance_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+
+slider_dance = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_dance.set(2.5)  # Default value (number of recommendations)
+slider_dance.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+
+
+def update_dance_label(val) -> None:
+    """
+        updates the number beside the slider_label to represent the value of dance
+        Instance Attributes:
+        - val: value from the slider
+    """
+    slider_dance_label.config(text=f"Dancebility: {int(float(val))}")
+
+
+slider_dance.config(command=update_dance_label)
+
+# energy slider
+slider_energy_label = ttk.Label(dt_widget, text="Energy:5")
+slider_energy_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+slider_energy = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_energy.set(2.5)  # Default value (number of recommendations)
+slider_energy.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
 # Output table
 output_frame = ttk.Frame(main_frame)
@@ -251,10 +318,8 @@ def suggest_song() -> None:
         tree.insert("", "end", values=(item[0], item[1], star(float(item[2]))), tags=(tag,))
         i += 1
 
-    check()
 
-
-# Recommend button
+# Recommend button for Database search
 accent_button = ttk.Button(widgets_frame, text="Recommend New Songs!", style="Accent.TButton",
                            command=suggest_song)
 accent_button.grid(row=5, column=0, padx=5, pady=10, sticky="nsew")
