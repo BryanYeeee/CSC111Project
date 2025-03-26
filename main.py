@@ -65,8 +65,9 @@ entry.bind("<FocusOut>", on_focus_out)
 listbox_frame = ttk.Frame(widgets_frame)
 listbox_frame.grid(row=1, column=0, pady=10, sticky="nsew")
 
-# Create a vertical scrollbar
-scrollbar = ttk.Scrollbar(listbox_frame, orient="vertical")
+# Create scrollbars
+v_scrollbar = ttk.Scrollbar(listbox_frame, orient="vertical")
+h_scrollbar = ttk.Scrollbar(listbox_frame, orient="horizontal")
 
 
 my_list = Listbox(
@@ -75,22 +76,16 @@ my_list = Listbox(
     background="#383434",
     foreground="white",
     font=("Helvetica", 15),
-    yscrollcommand=scrollbar.set
+    yscrollcommand=v_scrollbar.set,
+    xscrollcommand=h_scrollbar.set
 )
 
 
-def disable_horizontal_scroll(_1, _2):
-    """
-        disables horizontal scrolling for the listbox.
-    """
-    my_list.xview_moveto(0)
+v_scrollbar.config(command=my_list.yview)
+h_scrollbar.config(command=my_list.xview)
 
-
-my_list.configure(xscrollcommand=disable_horizontal_scroll)
-scrollbar.config(command=my_list.yview)
-
-
-scrollbar.pack(side="right", fill="y")
+v_scrollbar.pack(side="right", fill="y")
+h_scrollbar.pack(side="bottom", fill="x")
 my_list.pack(side="left", fill="both", expand=True)
 
 
