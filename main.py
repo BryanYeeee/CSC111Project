@@ -190,7 +190,7 @@ def suggest_song() -> None:
     # firstly, clear the previous values
     for item in tree.get_children():
         tree.delete(item)
-    
+
     # case: when u mistakenly click the recommend button twice or dont select a song
     if not song_input:
         tree.insert("", "end", values=("You must select a song from the list!", "-", "-"))
@@ -245,3 +245,6 @@ root.geometry("+{}+{}".format(x_cordinate, y_cordinate))
 
 # initialize the window
 root.mainloop()
+
+
+# tabs feature check
