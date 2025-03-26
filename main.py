@@ -174,7 +174,15 @@ def suggest_song() -> None:
     for item in tree.get_children():
         tree.delete(item)
 
+    if not song_input:
+        tree.insert("", "end", values=("You must select a song from the list!", "-", "-"))
+        return
+
     song_list = recommendation_system.generate_recommendations(song_input, 10)
+
+    if not song_list:
+        tree.insert("", "end", values=("No similar songs found :(", "", ""))
+        return
 
     # Now, we need to update the treeview.
     i = 1
@@ -182,6 +190,7 @@ def suggest_song() -> None:
         tag = 'even' if i % 2 == 0 else 'odd'
         tree.insert("", "end", values=(item[0], item[1], item[2]), tags=(tag,))
         i += 1
+
 
 
 # Recommend button
