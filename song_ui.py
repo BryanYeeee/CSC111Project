@@ -31,10 +31,10 @@ widgets_frame = ttk.Frame(root, padding=(0, 0, 0, 10))
 widgets_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 widgets_frame.columnconfigure(0, weight=1)
 
-# checkbox for popular songs
-pop = BooleanVar()
-p = ttk.Checkbutton(widgets_frame, text="Popular songs only", variable=pop)
-p.grid(row=2, column=0, pady=(5, 2), sticky="w")  # Less vertical spacing
+# # checkbox for popular songs
+# pop = BooleanVar()
+# p = ttk.Checkbutton(widgets_frame, text="Popular songs only", variable=pop)
+# p.grid(row=2, column=0, pady=(5, 2), sticky="w")  # Less vertical spacing
 
 # Entry field
 placeholder_text = "Enter song name here:"
@@ -66,8 +66,36 @@ entry.bind("<FocusOut>", on_focus_out)
 
 # search bar
 
-my_list = Listbox(widgets_frame, width=50, background="#383434", foreground="white", font=("Helvetia", 15))
-my_list.grid(row=1, column=0, pady=40, sticky="ew")
+listbox_frame = ttk.Frame(widgets_frame)
+listbox_frame.grid(row=1, column=0, pady=10, sticky="nsew")
+
+# Create a vertical scrollbar
+scrollbar = ttk.Scrollbar(listbox_frame, orient="vertical")
+
+
+my_list = Listbox(
+    listbox_frame,
+    width=50,
+    background="#383434",
+    foreground="white",
+    font=("Helvetica", 15),
+    yscrollcommand=scrollbar.set
+)
+
+
+def disable_horizontal_scroll(*args):
+    """
+        disables horizontal scrolling for the listbox.
+    """
+    my_list.xview_moveto(0)
+
+
+my_list.configure(xscrollcommand=disable_horizontal_scroll)
+scrollbar.config(command=my_list.yview)
+
+
+scrollbar.pack(side="right", fill="y")
+my_list.pack(side="left", fill="both", expand=True)
 
 
 def update(lst):
@@ -128,7 +156,7 @@ tree.tag_configure('even', background='#191c1a')
 tree.tag_configure('odd', background='#2d302d')
 
 
-def get_input() -> tuple[str, bool]:
+def get_input() -> str:
     """
         Gets the text input from the user, after they click the recommend button.
     """
@@ -137,7 +165,7 @@ def get_input() -> tuple[str, bool]:
         entry.delete(0, tk.END)
         entry.insert(0, placeholder_text)
         entry.configure(foreground="grey")
-        return song_name, pop.get()
+        return song_name
 
 
 def suggest_song() -> None:
@@ -147,11 +175,14 @@ def suggest_song() -> None:
     song_input = get_input()
     # TODO: remove ts later
     print(song_input)
+
+    my_list.selection_clear(0, tk.END)
+
     # firstly, clear the previous values
     for item in tree.get_children():
         tree.delete(item)
 
-    song_list = recommendation_system.generate_recommendations(song_input[0], 10)
+    song_list = recommendation_system.generate_recommendations(song_input, 10)
 
     # Now, we need to update the treeview.
     i = 1
