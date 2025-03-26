@@ -14,9 +14,9 @@ root = tk.Tk()
 root.title("Music Search ahh app")
 root.option_add("*tearOff", False)
 
-root.columnconfigure(0, weight=1)
-root.columnconfigure(1, weight=3)
-root.rowconfigure(0, weight=1)
+# root.columnconfigure(0, weight=1)
+# root.columnconfigure(1, weight=3)
+# root.rowconfigure(0, weight=1)
 
 # Styling, import theme
 style = ttk.Style(root)
@@ -25,9 +25,20 @@ style.theme_use("forest-dark")
 style.configure("Treeview", font=("Helvetica", 17), rowheight=25)
 
 # Frame for the IO interface
-widgets_frame = ttk.Frame(root, padding=(0, 0, 0, 10))
-widgets_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-widgets_frame.columnconfigure(0, weight=1)
+main_frame = ttk.Frame(root)
+main_frame.pack(fill="both", expand=True)
+main_frame.columnconfigure(0, weight=1)
+main_frame.columnconfigure(1, weight=2)
+main_frame.rowconfigure(0, weight=1)
+
+tabs = ttk.Notebook(main_frame)
+tabs.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+tab1 = ttk.Frame(tabs)
+tabs.add(tab1, text="Search Database")
+
+widgets_frame = ttk.Frame(tab1, padding=(0, 0, 0, 10))
+widgets_frame.pack(padx=10, pady=10, fill="both", expand=True)
 
 # Entry field
 placeholder_text = "Enter song name here:"
@@ -128,11 +139,19 @@ entry.bind("<KeyRelease>", check)
 
 my_list.bind("<<ListboxSelect>>", fill_entry)
 
-# Output table
-tree_frame = ttk.Frame(root)
-tree_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")  # Expands fully
+# Tab 2 - Empty
+tab2 = ttk.Frame(tabs)
+tabs.add(tab2, text="WebScrape")
 
-tree = ttk.Treeview(tree_frame, columns=("Title", "Artist", "Score"), show="headings")
+# Tab 3 - Empty
+tab3 = ttk.Frame(tabs)
+tabs.add(tab3, text="Decision Tree")
+
+# Output table
+output_frame = ttk.Frame(main_frame)
+output_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")  # Expands fully
+
+tree = ttk.Treeview(output_frame, columns=("Title", "Artist", "Score"), show="headings")
 tree.heading("Title", text="Title")
 tree.heading("Artist", text="Artist")
 tree.heading("Score", text="Score")
@@ -174,6 +193,7 @@ def update_slider_label(val) -> None:
     """
     slider_label.config(text=f"Max number of Recommendations: {int(float(val))}")
 
+
 # update slider_label with the current n_recom value
 slider.config(command=update_slider_label)
 
@@ -206,9 +226,9 @@ def suggest_song() -> None:
 
     # Now, we need to update the treeview.
     # best_score = first score, which is the best recommendation
-    best_score = song_list[00][2]
+    best_score = float(song_list[00][2])
 
-    def star(value: int) -> str:
+    def star(value: float) -> str:
         """
             converts the score to a star based rating
             within 50% greater than the best score: 3 stars
@@ -224,11 +244,14 @@ def suggest_song() -> None:
             return "⭐⭐"
         else:
             return "⭐"
+
     i = 1
     for item in song_list:
         tag = 'even' if i % 2 == 0 else 'odd'
-        tree.insert("", "end", values=(item[0], item[1], star(item[2])), tags=(tag,))
+        tree.insert("", "end", values=(item[0], item[1], star(float(item[2]))), tags=(tag,))
         i += 1
+
+    check()
 
 
 # Recommend button
@@ -245,6 +268,5 @@ root.geometry("+{}+{}".format(x_cordinate, y_cordinate))
 
 # initialize the window
 root.mainloop()
-
 
 # tabs feature check
