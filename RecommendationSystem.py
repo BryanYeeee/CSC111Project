@@ -1,9 +1,13 @@
 """
 This module contains the RecommendationSystem class, which generates song recommendations.
 """
+import random
+from typing import Optional
 from GenerateGraph import generate_song_graph, SEARCH_BAR_SPLITTER
 from SongGraph import SongGraph
+from SongDecisionTree import SongDecisionTree
 
+DEFAULT_RECOMMENDATION_COUNT = 10
 class RecommendationSystem:
     """
     Song recommendation system class to generate recommendations.
@@ -14,24 +18,36 @@ class RecommendationSystem:
     """
     graph: SongGraph
     song_list_names: dict[str: str]
+    tree: SongDecisionTree
 
     def __init__(self):
         """
         Initialize the RecommendationSystem class and generate the song graph.
         """
-        self.graph, self.song_list_names = generate_song_graph()
+        self.graph, self.song_list_names, self.tree = generate_song_graph()
 
-    def obtain_vertex_id(self, given_input: str) -> str:
+    def obtain_vertex_id(self, given_input: Optional[str | list]) -> Optional[str]:
         """
-        Given a string formatted like "song_name<SEARCH_BAR_SPLITTER>artist_name", return the vertex_id of the song.
+        If given a string formatted like "song_name<SEARCH_BAR_SPLITTER>artist_name", return the vertex_id of the song.
+        If given a list of inputs, return the vertex_id of the song that is closest to the inputs.
         """
-        return self.song_list_names[given_input]
+        if given_input is None:
+            return None
+        if isinstance(given_input, str):
+            return self.song_list_names[given_input]
+        else:
+            options = self.tree.find_related_songs(given_input)
+            print(options)
+            return options[random.randint(0, len(options) - 1)]
 
-    def generate_recommendations(self, given_input: str, n: int) -> list[str, str, str]:
+
+    def generate_recommendations(self, given_input: Optional[str], n: int = DEFAULT_RECOMMENDATION_COUNT) -> list[str]:
         """
         Given a song name and artist, return a list of n tuples where the tuple is formatted like
         (song_name, artist_name, score).
         """
+        if not given_input:
+            return []
         vertex_id = self.obtain_vertex_id(given_input)
         shortest_distance = self.graph.find_shortest_distance(vertex_id, n)
         res = []
@@ -53,3 +69,8 @@ if __name__ == '__main__':
 
     for rec in recs:
         print(rec)
+    
+    # inputs = [0.665,0.185,1,-13.852,1,0.0381,0.913,0.0,0.334,0.458,82.474,'acoustic'] # 1RZkqIEM5aV000fKgz9J46
+    # inputs = [0.676,0.461,1,-6.746,0,0.143,0.0322,1.01e-06,0.358,0.715,87.917,'acoustic'] # 5SuOikwiRyPMVoIQDJUgSV
+    inputs = [0.534,0.26,1,-12.406,1,0.0319,0.834,0.00405,0.102,0.151,113.877,'acoustic'] # 4ujYTGqbiV5xl97Pqoctq2
+    sys.obtain_vertex_id(inputs)
