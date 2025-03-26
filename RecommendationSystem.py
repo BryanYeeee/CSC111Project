@@ -1,5 +1,6 @@
 """
-This module contains the RecommendationSystem class, which generates song recommendations.
+This module contains the RecommendationSystem class, which generates song recommendations 
+based on inputs given by the user
 """
 import random
 from typing import Optional
@@ -17,7 +18,7 @@ class RecommendationSystem:
         - song_list_names: a dictionary mapping song names to its vertex id in graph
     """
     graph: SongGraph
-    song_list_names: dict[str: str]
+    song_list_names: dict[str, str]
     tree: SongDecisionTree
 
     def __init__(self):

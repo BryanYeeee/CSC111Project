@@ -1,5 +1,5 @@
 """
-This module processes csv dataset files to generate a SongGraph to be used by the recommendation system
+This module processes csv dataset files to generate the necessary objects to be used by the recommendation system
 """
 import csv
 from SongGraph import SongGraph
@@ -15,7 +15,7 @@ INTERVAL = (SONG_LIMIT_1 + SONG_LIMIT_2)//10
 BASE_GENRES = {"pop", "rock", "techno", "metal", "house", "reggae", "songwriter"}
 SAME_GENRES = {"rap": "hip-hop", "r&b": "r-n-b"}
 
-SEARCH_BAR_SPLITTER = "｜"  # may need this as well in the file wherever the dictionary/list is generated
+SEARCH_BAR_SPLITTER = "｜" 
 
 
 def filter_genre(genre: str) -> str:
@@ -61,9 +61,10 @@ def add_to_objects(vertex_id: str, name: str, artists: set[str],
             values.append(vertex_id)
             new_tree.insert_song(values)
 
-def generate_song_graph() -> tuple[SongGraph, dict[str: str], SongDecisionTree]:
+def generate_song_graph() -> tuple[SongGraph, dict[str, str], SongDecisionTree]:
     """
-    Generates a SongGraph by reading two CSV datasets containing Spotify song data.
+    Generates a SongGraph, dictionary mapping song and artists to track id, and SongDecisionTree
+    by reading two CSV datasets containing Spotify song data.
     Each song in the dataset is added as a vertex in the graph with its properties like
     genre, danceability, energy, tempo, artists, etc.
     """

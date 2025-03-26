@@ -85,7 +85,7 @@ class _Vertex:
         instrumentalness: str, liveness: str, valence: str,
         tempo: str, track_genre: str
     ) -> None:
-        """ Initialize a new vertex"""
+        """ Initialize a new vertex based on the given data"""
         self.vertex_id = vertex_id
         self.name = name
         self.artists = artists
