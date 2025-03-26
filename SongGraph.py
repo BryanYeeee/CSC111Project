@@ -4,6 +4,7 @@ some stuffs
 
 """
 from __future__ import annotations
+import heapq
 from typing import Any
 import networkx as nx
 
@@ -266,6 +267,37 @@ class SongGraph:
         Used to decide a value for the SCORE_LIMIT constant
         """
         return sum(len(self._vertices[vid].neighbours) for vid in self._vertices)/(len(self._vertices))
+
+    def find_shortest_distance(self, orig_vertex_id: str, n: int) -> list[str, float]:
+        """
+        Given the id of a song in the graph, find n other songs that
+        are similar to the song and return their vertex_ids in a list.
+
+        Preconditions:
+            - orig_vertex_id in self.graph._vertices
+            - n > 0
+        """
+        shortest_distance = {orig_vertex_id: 0}
+
+        queue = [(0.0, orig_vertex_id)]
+        visited = set()
+        while queue and len(shortest_distance) + 1 < n:
+            score, vertex_id = heapq.heappop(queue)
+            visited.add(vertex_id)
+            neighbours = self.get_neighbours(vertex_id)
+            for neighbour in neighbours:
+                neighbour_score = neighbours[neighbour]
+                if neighbour not in shortest_distance:
+                    shortest_distance[neighbour] = float('inf')
+                shortest_distance[neighbour] = min(shortest_distance[neighbour], score + neighbour_score)
+
+                if neighbour not in visited:
+                    heapq.heappush(queue, (score + neighbour_score, neighbour))
+        del shortest_distance[orig_vertex_id]
+        res = [(key, shortest_distance[key]) for key in shortest_distance]
+        res.sort(key=lambda x: x[1])
+        print(res)
+        return res[:n]
 
     def to_networkx(self, max_vertices: int = 5000) -> nx.Graph:
         """Convert this graph into a networkx Graph.
