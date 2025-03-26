@@ -187,7 +187,7 @@ dt_widget.columnconfigure(1, weight=1)
 dt_widget.pack(padx=10, pady=10, fill="both", expand=True)
 
 # Danceability slider
-slider_danceability_label = ttk.Label(dt_widget, text="Danceability: 5")
+slider_danceability_label = ttk.Label(dt_widget, text="Danceability: 2")
 slider_danceability_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
 slider_danceability = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -207,7 +207,7 @@ def update_danceability_label(val) -> None:
 slider_danceability.config(command=update_danceability_label)
 
 # Energy slider
-slider_energy_label = ttk.Label(dt_widget, text="Energy: 5")
+slider_energy_label = ttk.Label(dt_widget, text="Energy: 2")
 slider_energy_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
 
 slider_energy = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -227,7 +227,7 @@ def update_energy_label(val) -> None:
 slider_energy.config(command=update_energy_label)
 
 # Key slider
-slider_key_label = ttk.Label(dt_widget, text="Key: 5")
+slider_key_label = ttk.Label(dt_widget, text="Key: 2")
 slider_key_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
 
 slider_key = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -247,7 +247,7 @@ def update_key_label(val) -> None:
 slider_key.config(command=update_key_label)
 
 # Loudness slider
-slider_loudness_label = ttk.Label(dt_widget, text="Loudness: 5")
+slider_loudness_label = ttk.Label(dt_widget, text="Loudness: 2")
 slider_loudness_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
 slider_loudness = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -267,7 +267,7 @@ def update_loudness_label(val) -> None:
 slider_loudness.config(command=update_loudness_label)
 
 # Mode slider
-slider_mode_label = ttk.Label(dt_widget, text="Mode: 5")
+slider_mode_label = ttk.Label(dt_widget, text="Mode: 2")
 slider_mode_label.grid(row=2, column=1, padx=5, pady=5, sticky="w")
 
 slider_mode = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -287,7 +287,7 @@ def update_mode_label(val) -> None:
 slider_mode.config(command=update_mode_label)
 
 # Speechiness slider
-slider_speechiness_label = ttk.Label(dt_widget, text="Speechiness: 5")
+slider_speechiness_label = ttk.Label(dt_widget, text="Speechiness: 2")
 slider_speechiness_label.grid(row=4, column=1, padx=5, pady=5, sticky="w")
 
 slider_speechiness = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -307,7 +307,7 @@ def update_speechiness_label(val) -> None:
 slider_speechiness.config(command=update_speechiness_label)
 
 # Acousticness slider
-slider_acousticness_label = ttk.Label(dt_widget, text="Acousticness: 5")
+slider_acousticness_label = ttk.Label(dt_widget, text="Acousticness: 2")
 slider_acousticness_label.grid(row=6, column=0, padx=5, pady=5, sticky="w")
 
 slider_acousticness = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -327,7 +327,7 @@ def update_acousticness_label(val) -> None:
 slider_acousticness.config(command=update_acousticness_label)
 
 # Instrumentalness slider
-slider_instrumentalness_label = ttk.Label(dt_widget, text="Instrumentalness: 5")
+slider_instrumentalness_label = ttk.Label(dt_widget, text="Instrumentalness: 2")
 slider_instrumentalness_label.grid(row=6, column=1, padx=5, pady=5, sticky="w")
 
 slider_instrumentalness = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -347,7 +347,7 @@ def update_instrumentalness_label(val) -> None:
 slider_instrumentalness.config(command=update_instrumentalness_label)
 
 # Liveness slider
-slider_liveness_label = ttk.Label(dt_widget, text="Liveness: 5")
+slider_liveness_label = ttk.Label(dt_widget, text="Liveness: 2")
 slider_liveness_label.grid(row=8, column=0, padx=5, pady=5, sticky="w")
 
 slider_liveness = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -367,7 +367,7 @@ def update_liveness_label(val) -> None:
 slider_liveness.config(command=update_liveness_label)
 
 # Valence slider
-slider_valence_label = ttk.Label(dt_widget, text="Valence: 5")
+slider_valence_label = ttk.Label(dt_widget, text="Valence: 2")
 slider_valence_label.grid(row=8, column=1, padx=5, pady=5, sticky="w")
 
 slider_valence = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -387,7 +387,7 @@ def update_valence_label(val) -> None:
 slider_valence.config(command=update_valence_label)
 
 # Tempo slider
-slider_tempo_label = ttk.Label(dt_widget, text="Tempo: 5")
+slider_tempo_label = ttk.Label(dt_widget, text="Tempo: 2")
 slider_tempo_label.grid(row=10, column=0, padx=5, pady=5, sticky="w")
 
 slider_tempo = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
@@ -406,7 +406,6 @@ def update_tempo_label(val) -> None:
 
 slider_tempo.config(command=update_tempo_label)
 
-
 # genre
 
 genre_label = ttk.Label(dt_widget, text="Genre")
@@ -422,7 +421,22 @@ def get_slider():
     """
     negus
     """
-    return
+
+    slider_value = [
+        slider_danceability.get(),
+        slider_energy.get(),
+        slider_key.get(),
+        slider_loudness.get(),
+        slider_mode.get(),
+        slider_speechiness.get(),
+        slider_acousticness.get(),
+        slider_instrumentalness.get(),
+        slider_liveness.get(),
+        slider_valence.get(),
+        slider_tempo.get(),
+    ]
+
+    print([int(x) for x in slider_value]+[genre_name.get()])
 
 
 accent_button_slider = ttk.Button(dt_widget, text="Recommend New Songs!", style="Accent.TButton",
