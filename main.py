@@ -201,6 +201,7 @@ accent_button_web = ttk.Button(web_widgets, text="Recommend New Songs!", style="
 accent_button_web.grid(row=1, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
 
 # Tab 3 - Decision Tree
+
 tab3 = ttk.Frame(tabs)
 tabs.add(tab3, text="Custom!")
 
@@ -209,6 +210,18 @@ dt_widget.columnconfigure(0, weight=1)
 dt_widget.columnconfigure(1, weight=1)
 
 dt_widget.pack(padx=10, pady=10, fill="both", expand=True)
+
+
+def get_val(val: float) -> int:
+    """
+        Gets the integer value for a slider, that is consistent with what is displayed in the labels
+    """
+
+    if 0 < val < 1:
+        return 1
+    else:
+        return int(val)
+
 
 # Danceability slider
 slider_danceability_label = ttk.Label(dt_widget, text="Danceability: 2")
@@ -225,7 +238,10 @@ def update_danceability_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_danceability_label.config(text=f"Danceability: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_danceability_label.config(text=f"Danceability: 1")
+    else:
+        slider_danceability_label.config(text=f"Danceability: {int(float(val))}")
 
 
 slider_danceability.config(command=update_danceability_label)
@@ -245,7 +261,10 @@ def update_energy_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_energy_label.config(text=f"Energy: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_energy_label.config(text=f"Energy: 1")
+    else:
+        slider_energy_label.config(text=f"Energy: {int(float(val))}")
 
 
 slider_energy.config(command=update_energy_label)
@@ -265,7 +284,10 @@ def update_key_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_key_label.config(text=f"Key: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_key_label.config(text=f"Key: 1")
+    else:
+        slider_key_label.config(text=f"Key: {int(float(val))}")
 
 
 slider_key.config(command=update_key_label)
@@ -285,7 +307,10 @@ def update_loudness_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_loudness_label.config(text=f"Loudness: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_loudness_label.config(text=f"Loudness: 1")
+    else:
+        slider_loudness_label.config(text=f"Loudness: {int(float(val))}")
 
 
 slider_loudness.config(command=update_loudness_label)
@@ -305,7 +330,10 @@ def update_mode_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_mode_label.config(text=f"Mode: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_mode_label.config(text=f"Mode: 1")
+    else:
+        slider_mode_label.config(text=f"Mode: {int(float(val))}")
 
 
 slider_mode.config(command=update_mode_label)
@@ -325,7 +353,10 @@ def update_speechiness_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_speechiness_label.config(text=f"Speechiness: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_speechiness_label.config(text=f"Speechiness: 1")
+    else:
+        slider_speechiness_label.config(text=f"Speechiness: {int(float(val))}")
 
 
 slider_speechiness.config(command=update_speechiness_label)
@@ -345,7 +376,10 @@ def update_acousticness_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_acousticness_label.config(text=f"Acousticness: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_acousticness_label.config(text=f"Acousticness: 1")
+    else:
+        slider_acousticness_label.config(text=f"Acousticness: {int(float(val))}")
 
 
 slider_acousticness.config(command=update_acousticness_label)
@@ -365,7 +399,10 @@ def update_instrumentalness_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_instrumentalness_label.config(text=f"Instrumentalness: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_instrumentalness_label.config(text=f"Instrumentalness: 1")
+    else:
+        slider_instrumentalness_label.config(text=f"Instrumentalness: {int(float(val))}")
 
 
 slider_instrumentalness.config(command=update_instrumentalness_label)
@@ -385,7 +422,10 @@ def update_liveness_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_liveness_label.config(text=f"Liveness: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_liveness_label.config(text=f"Liveness: 1")
+    else:
+        slider_liveness_label.config(text=f"Liveness: {int(float(val))}")
 
 
 slider_liveness.config(command=update_liveness_label)
@@ -405,7 +445,10 @@ def update_valence_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_valence_label.config(text=f"Valence: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_valence_label.config(text=f"Valence: 1")
+    else:
+        slider_valence_label.config(text=f"Valence: {int(float(val))}")
 
 
 slider_valence.config(command=update_valence_label)
@@ -425,7 +468,10 @@ def update_tempo_label(val) -> None:
     Instance Attributes:
     - val: value from the slider
     """
-    slider_tempo_label.config(text=f"Tempo: {int(float(val))}")
+    if 0 < float(val) < 1:
+        slider_tempo_label.config(text=f"Tempo: 1")
+    else:
+        slider_tempo_label.config(text=f"Tempo: {int(float(val))}")
 
 
 slider_tempo.config(command=update_tempo_label)
@@ -463,17 +509,17 @@ def get_slider():
     """
 
     slider_value = [
-        int(slider_danceability.get()),
-        int(slider_energy.get()),
-        int(slider_key.get()),
-        int(slider_loudness.get()),
-        int(slider_mode.get()),
-        int(slider_speechiness.get()),
-        int(slider_acousticness.get()),
-        int(slider_instrumentalness.get()),
-        int(slider_liveness.get()),
-        int(slider_valence.get()),
-        int(slider_tempo.get()),
+        get_val(slider_danceability.get()),
+        get_val(slider_energy.get()),
+        get_val(slider_key.get()),
+        get_val(slider_loudness.get()),
+        get_val(slider_mode.get()),
+        get_val(slider_speechiness.get()),
+        get_val(slider_acousticness.get()),
+        get_val(slider_instrumentalness.get()),
+        get_val(slider_liveness.get()),
+        get_val(slider_valence.get()),
+        get_val(slider_tempo.get()),
     ]
 
     # u can modify this as needed to get the values
