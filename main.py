@@ -406,6 +406,29 @@ def update_tempo_label(val) -> None:
 
 slider_tempo.config(command=update_tempo_label)
 
+
+# genre
+
+genre_label = ttk.Label(dt_widget, text="Genre")
+genre_label.grid(row=10, column=1, padx=5, pady=5, sticky="w")
+
+genres = ["acoustic"]
+
+genre_name = ttk.Combobox(dt_widget, values=genres, state="readonly", width=30)
+genre_name.grid(row=11, column=1, padx=5, pady=5, sticky="w")
+
+
+def get_slider():
+    """
+    negus
+    """
+    return
+
+
+accent_button_slider = ttk.Button(dt_widget, text="Recommend New Songs!", style="Accent.TButton",
+                                  command=get_slider)
+accent_button_slider.grid(row=12, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
+
 # Output table
 output_frame = ttk.Frame(main_frame)
 output_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")  # Expands fully
@@ -525,5 +548,3 @@ root.geometry("+{}+{}".format(x_cordinate, y_cordinate))
 
 # initialize the window
 root.mainloop()
-
-# tabs feature check
