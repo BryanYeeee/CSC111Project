@@ -186,33 +186,225 @@ dt_widget.columnconfigure(1, weight=1)
 
 dt_widget.pack(padx=10, pady=10, fill="both", expand=True)
 
-# dance slider
-slider_dance_label = ttk.Label(dt_widget, text="Dancebility: 5")
-slider_dance_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+# Danceability slider
+slider_danceability_label = ttk.Label(dt_widget, text="Danceability: 5")
+slider_danceability_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
-slider_dance = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
-slider_dance.set(2.5)  # Default value (number of recommendations)
-slider_dance.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+slider_danceability = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_danceability.set(2.5)
+slider_danceability.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
 
 
-def update_dance_label(val) -> None:
+def update_danceability_label(val) -> None:
     """
-        updates the number beside the slider_label to represent the value of dance
-        Instance Attributes:
-        - val: value from the slider
+    Updates the label for danceability to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
     """
-    slider_dance_label.config(text=f"Dancebility: {int(float(val))}")
+    slider_danceability_label.config(text=f"Danceability: {int(float(val))}")
 
 
-slider_dance.config(command=update_dance_label)
+slider_danceability.config(command=update_danceability_label)
 
-# energy slider
-slider_energy_label = ttk.Label(dt_widget, text="Energy:5")
-slider_energy_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+# Energy slider
+slider_energy_label = ttk.Label(dt_widget, text="Energy: 5")
+slider_energy_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
 
 slider_energy = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
-slider_energy.set(2.5)  # Default value (number of recommendations)
-slider_energy.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
+slider_energy.set(2.5)
+slider_energy.grid(row=3, column=0, padx=5, pady=5, sticky="ew")
+
+
+def update_energy_label(val) -> None:
+    """
+    Updates the label for energy to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
+    """
+    slider_energy_label.config(text=f"Energy: {int(float(val))}")
+
+
+slider_energy.config(command=update_energy_label)
+
+# Key slider
+slider_key_label = ttk.Label(dt_widget, text="Key: 5")
+slider_key_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
+
+slider_key = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_key.set(2.5)
+slider_key.grid(row=5, column=0, padx=5, pady=5, sticky="ew")
+
+
+def update_key_label(val) -> None:
+    """
+    Updates the label for key to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
+    """
+    slider_key_label.config(text=f"Key: {int(float(val))}")
+
+
+slider_key.config(command=update_key_label)
+
+# Loudness slider
+slider_loudness_label = ttk.Label(dt_widget, text="Loudness: 5")
+slider_loudness_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+slider_loudness = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_loudness.set(2.5)
+slider_loudness.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
+
+
+def update_loudness_label(val) -> None:
+    """
+    Updates the label for loudness to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
+    """
+    slider_loudness_label.config(text=f"Loudness: {int(float(val))}")
+
+
+slider_loudness.config(command=update_loudness_label)
+
+# Mode slider
+slider_mode_label = ttk.Label(dt_widget, text="Mode: 5")
+slider_mode_label.grid(row=2, column=1, padx=5, pady=5, sticky="w")
+
+slider_mode = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_mode.set(2.5)
+slider_mode.grid(row=3, column=1, padx=5, pady=5, sticky="ew")
+
+
+def update_mode_label(val) -> None:
+    """
+    Updates the label for mode to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
+    """
+    slider_mode_label.config(text=f"Mode: {int(float(val))}")
+
+
+slider_mode.config(command=update_mode_label)
+
+# Speechiness slider
+slider_speechiness_label = ttk.Label(dt_widget, text="Speechiness: 5")
+slider_speechiness_label.grid(row=4, column=1, padx=5, pady=5, sticky="w")
+
+slider_speechiness = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_speechiness.set(2.5)
+slider_speechiness.grid(row=5, column=1, padx=5, pady=5, sticky="ew")
+
+
+def update_speechiness_label(val) -> None:
+    """
+    Updates the label for speechiness to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
+    """
+    slider_speechiness_label.config(text=f"Speechiness: {int(float(val))}")
+
+
+slider_speechiness.config(command=update_speechiness_label)
+
+# Acousticness slider
+slider_acousticness_label = ttk.Label(dt_widget, text="Acousticness: 5")
+slider_acousticness_label.grid(row=6, column=0, padx=5, pady=5, sticky="w")
+
+slider_acousticness = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_acousticness.set(2.5)
+slider_acousticness.grid(row=7, column=0, padx=5, pady=5, sticky="ew")
+
+
+def update_acousticness_label(val) -> None:
+    """
+    Updates the label for acousticness to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
+    """
+    slider_acousticness_label.config(text=f"Acousticness: {int(float(val))}")
+
+
+slider_acousticness.config(command=update_acousticness_label)
+
+# Instrumentalness slider
+slider_instrumentalness_label = ttk.Label(dt_widget, text="Instrumentalness: 5")
+slider_instrumentalness_label.grid(row=6, column=1, padx=5, pady=5, sticky="w")
+
+slider_instrumentalness = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_instrumentalness.set(2.5)
+slider_instrumentalness.grid(row=7, column=1, padx=5, pady=5, sticky="ew")
+
+
+def update_instrumentalness_label(val) -> None:
+    """
+    Updates the label for instrumentalness to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
+    """
+    slider_instrumentalness_label.config(text=f"Instrumentalness: {int(float(val))}")
+
+
+slider_instrumentalness.config(command=update_instrumentalness_label)
+
+# Liveness slider
+slider_liveness_label = ttk.Label(dt_widget, text="Liveness: 5")
+slider_liveness_label.grid(row=8, column=0, padx=5, pady=5, sticky="w")
+
+slider_liveness = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_liveness.set(2.5)
+slider_liveness.grid(row=9, column=0, padx=5, pady=5, sticky="ew")
+
+
+def update_liveness_label(val) -> None:
+    """
+    Updates the label for liveness to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
+    """
+    slider_liveness_label.config(text=f"Liveness: {int(float(val))}")
+
+
+slider_liveness.config(command=update_liveness_label)
+
+# Valence slider
+slider_valence_label = ttk.Label(dt_widget, text="Valence: 5")
+slider_valence_label.grid(row=8, column=1, padx=5, pady=5, sticky="w")
+
+slider_valence = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_valence.set(2.5)
+slider_valence.grid(row=9, column=1, padx=5, pady=5, sticky="ew")
+
+
+def update_valence_label(val) -> None:
+    """
+    Updates the label for valence to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
+    """
+    slider_valence_label.config(text=f"Valence: {int(float(val))}")
+
+
+slider_valence.config(command=update_valence_label)
+
+# Tempo slider
+slider_tempo_label = ttk.Label(dt_widget, text="Tempo: 5")
+slider_tempo_label.grid(row=10, column=0, padx=5, pady=5, sticky="w")
+
+slider_tempo = ttk.Scale(dt_widget, from_=0, to=5, orient="horizontal", length=200)
+slider_tempo.set(2.5)
+slider_tempo.grid(row=11, column=0, padx=5, pady=5, sticky="ew")
+
+
+def update_tempo_label(val) -> None:
+    """
+    Updates the label for tempo to reflect the current slider value.
+    Instance Attributes:
+    - val: value from the slider
+    """
+    slider_tempo_label.config(text=f"Tempo: {int(float(val))}")
+
+
+slider_tempo.config(command=update_tempo_label)
 
 # Output table
 output_frame = ttk.Frame(main_frame)
