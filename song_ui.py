@@ -31,10 +31,6 @@ widgets_frame = ttk.Frame(root, padding=(0, 0, 0, 10))
 widgets_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 widgets_frame.columnconfigure(0, weight=1)
 
-# # checkbox for popular songs
-# pop = BooleanVar()
-# p = ttk.Checkbutton(widgets_frame, text="Popular songs only", variable=pop)
-# p.grid(row=2, column=0, pady=(5, 2), sticky="w")  # Less vertical spacing
 
 # Entry field
 placeholder_text = "Enter song name here:"
@@ -83,7 +79,7 @@ my_list = Listbox(
 )
 
 
-def disable_horizontal_scroll(*args):
+def disable_horizontal_scroll(_1, _2):
     """
         disables horizontal scrolling for the listbox.
     """
@@ -115,6 +111,7 @@ def fill_entry(_):
     song = my_list.get(selected_index)
     entry.delete(0, "end")
     entry.insert(0, song)
+    entry.configure(foreground="white")
 
 
 def check(_):
