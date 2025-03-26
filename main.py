@@ -3,8 +3,7 @@
 """
 
 import tkinter as tk
-from tkinter import ttk, IntVar, Listbox
-
+from tkinter import ttk, Listbox
 
 from RecommendationSystem import RecommendationSystem
 
@@ -158,11 +157,30 @@ def get_input() -> str:
         return song_name
 
 
+slider_label = ttk.Label(widgets_frame, text="Max number of Recommendations: 10")
+slider_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+
+slider = ttk.Scale(widgets_frame, from_=1, to=10, orient="horizontal", length=200)
+slider.set(10)  # Default value (number of recommendations)
+slider.grid(row=4, column=0, padx=5, pady=5, sticky="ew")
+
+
+def update_slider_label(val):
+    """
+        updates the number beside the slider_label to represent the value of n_recom
+    """
+    slider_label.config(text=f"Max number of Recommendations: {int(float(val))}")
+
+
+slider.config(command=update_slider_label)
+
+
 def suggest_song() -> None:
     """
         takes the input, generates a list of simillar songs, and updates the treeview
     """
     song_input = get_input()
+    n_recom = int(slider.get())
     # TODO: remove ts later
     print(song_input)
 
@@ -177,6 +195,7 @@ def suggest_song() -> None:
         return
 
     song_list = recommendation_system.generate_recommendations(song_input, 10)
+    song_list = song_list[:n_recom]
 
     if not song_list:
         tree.insert("", "end", values=("No similar songs found :(", "", ""))
@@ -214,7 +233,7 @@ def suggest_song() -> None:
 # Recommend button
 accent_button = ttk.Button(widgets_frame, text="Recommend New Songs!", style="Accent.TButton",
                            command=suggest_song)
-accent_button.grid(row=4, column=0, padx=5, pady=10, sticky="nsew")
+accent_button.grid(row=5, column=0, padx=5, pady=10, sticky="nsew")
 
 # Center the window, and set minsize
 root.update()
