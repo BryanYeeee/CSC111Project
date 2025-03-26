@@ -31,8 +31,20 @@ main_frame.columnconfigure(0, weight=1)
 main_frame.columnconfigure(1, weight=2)
 main_frame.rowconfigure(0, weight=1)
 
+# tabs
+
 tabs = ttk.Notebook(main_frame)
 tabs.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+
+def prevent_auto_focus(_):
+    """
+        Forces focus away from the first widget in the tab
+    """
+    root.focus_set()
+
+
+tabs.bind("<<NotebookTabChanged>>", prevent_auto_focus)
 
 tab1 = ttk.Frame(tabs)
 tabs.add(tab1, text="Search Database")
@@ -79,8 +91,8 @@ h_scrollbar = ttk.Scrollbar(listbox_frame, orient="horizontal")
 
 my_list = Listbox(
     listbox_frame,
-    width=50,
     background="#383434",
+    width=50,
     foreground="white",
     font=("Helvetica", 15),
     yscrollcommand=v_scrollbar.set,
@@ -150,7 +162,7 @@ web_widgets.pack(padx=10, pady=10, fill="both", expand=True)
 
 # Entry field
 placeholder_text = "Enter song name here:"
-entry_web = ttk.Entry(web_widgets, foreground="white")
+entry_web = ttk.Entry(web_widgets, foreground="white", width=50)
 entry_web.insert(0, placeholder_text)
 entry_web.grid(row=0, column=0, padx=5, pady=(5, 2), sticky="ew")
 
@@ -175,6 +187,18 @@ def on_focus_out_web(_) -> None:
 
 entry_web.bind("<FocusIn>", on_click_web)
 entry_web.bind("<FocusOut>", on_focus_out_web)
+
+
+def get_web():
+    """
+        gets web
+    """
+    return
+
+
+accent_button_web = ttk.Button(web_widgets, text="Recommend New Songs!", style="Accent.TButton",
+                               command=get_web)
+accent_button_web.grid(row=1, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
 
 # Tab 3 - Decision Tree
 tab3 = ttk.Frame(tabs)
@@ -411,7 +435,19 @@ slider_tempo.config(command=update_tempo_label)
 genre_label = ttk.Label(dt_widget, text="Genre")
 genre_label.grid(row=10, column=1, padx=5, pady=5, sticky="w")
 
-genres = ["acoustic"]
+genres = ['guitar', 'goth', 'children', 'grunge', 'latin', 'comedy', 'j-dance', 'british', 'pagode', 'alt-rock',
+          'hardstyle', 'detroit-techno', 'indie-pop', 'tango', 'garage', 'singer-songwriter', 'idm', 'country',
+          'r-n-b', 'new-age', 'club', 'r&b', 'punk-rock', 'reggae', 'disco', 'black-metal', 'hardcore', 'j-rock',
+          'sleep', 'edm', 'death-metal', 'indian', 'samba', 'romance', 'turkish', 'dancehall', 'disney', 'pop', 'punk',
+          'happy', 'study', 'groove', 'dance', 'j-pop', 'german', 'rock', 'reggaeton', 'breakbeat', 'hip-hop', 'dub',
+          'show-tunes', 'trip-hop', 'funk', 'deep-house', 'trance', 'rock-n-roll', 'heavy-metal', 'classical', 'salsa',
+          'house', 'dubstep', 'acoustic', 'ska', 'hard-rock', 'rap', 'alternative', 'sertanejo', 'pop-film',
+          'power-pop', 'techno', 'party', 'industrial', 'metalcore', 'french', 'chill', 'forro', 'electro', 'spanish',
+          'malay', 'metal', 'blues', 'minimal-techno', 'emo', 'world-music', 'jazz', 'anime', 'cantopop', 'soul',
+          'swedish', 'j-idol', 'mandopop', 'iranian', 'honky-tonk', 'songwriter', 'grindcore', 'ambient', 'kids',
+          'electronic', 'sad', 'brazil', 'afrobeat', 'mpb', 'k-pop', 'indie', 'folk', 'bluegrass', 'psych-rock',
+          'latino', 'synth-pop', 'drum-and-bass', 'opera', 'gospel', 'rockabilly', 'piano', 'chicago-house',
+          'progressive-house']
 
 genre_name = ttk.Combobox(dt_widget, values=genres, state="readonly", width=30)
 genre_name.grid(row=11, column=1, padx=5, pady=5, sticky="w")
@@ -423,20 +459,29 @@ def get_slider():
     """
 
     slider_value = [
-        slider_danceability.get(),
-        slider_energy.get(),
-        slider_key.get(),
-        slider_loudness.get(),
-        slider_mode.get(),
-        slider_speechiness.get(),
-        slider_acousticness.get(),
-        slider_instrumentalness.get(),
-        slider_liveness.get(),
-        slider_valence.get(),
-        slider_tempo.get(),
+        int(slider_danceability.get()),
+        int(slider_energy.get()),
+        int(slider_key.get()),
+        int(slider_loudness.get()),
+        int(slider_mode.get()),
+        int(slider_speechiness.get()),
+        int(slider_acousticness.get()),
+        int(slider_instrumentalness.get()),
+        int(slider_liveness.get()),
+        int(slider_valence.get()),
+        int(slider_tempo.get()),
     ]
 
-    print([int(x) for x in slider_value]+[genre_name.get()])
+    attribute_range = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 250]
+
+    final_value = []
+
+    for i in range(len(slider_value)):
+        assert len(slider_value) == len(attribute_range)
+        attribute = (slider_value[i] / 10) * attribute_range[i]
+        final_value.append(attribute)
+
+    print(final_value + [genre_name.get()])
 
 
 accent_button_slider = ttk.Button(dt_widget, text="Recommend New Songs!", style="Accent.TButton",
@@ -507,7 +552,7 @@ def suggest_song() -> None:
     for item in tree.get_children():
         tree.delete(item)
 
-    # case: when u mistakenly click the recommend button twice or dont select a song
+    # case: when u mistakenly click the recommend button twice or don't select a song
     if not song_input:
         tree.insert("", "end", values=("You must select a song from the list!", "-", "-"))
         return
@@ -562,3 +607,4 @@ root.geometry("+{}+{}".format(x_cordinate, y_cordinate))
 
 # initialize the window
 root.mainloop()
+
