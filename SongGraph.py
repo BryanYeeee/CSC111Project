@@ -9,7 +9,7 @@ from typing import Any
 import networkx as nx
 
 SIMILARITY_WEIGHTING = {
-    "genre": 2.0,
+    "genre": 4.0,
     "danceability": 1.5,
     "energy": 1.5,
     "valence": 1.2,
@@ -114,7 +114,7 @@ class _Vertex:
         """
         score = 0
 
-        if self.track_genre == other.track_genre:
+        if self.track_genre != other.track_genre:
             score += SIMILARITY_WEIGHTING["genre"]
 
         numerical_features = [
