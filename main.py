@@ -18,11 +18,9 @@ root.columnconfigure(0, weight=1)
 root.columnconfigure(1, weight=3)
 root.rowconfigure(0, weight=1)
 
+# Styling, import theme
 style = ttk.Style(root)
-# Import the tcl file
 root.tk.call("source", "forest-dark.tcl")
-
-# Set the theme with the theme_use method
 style.theme_use("forest-dark")
 style.configure("Treeview", font=("Helvetica", 17), rowheight=25)
 
@@ -38,7 +36,7 @@ entry.insert(0, placeholder_text)
 entry.grid(row=0, column=0, padx=5, pady=(5, 2), sticky="ew")
 
 
-def on_click(_):
+def on_click(_) -> None:
     """
         Changes the input text to white so that it is easier for user to see what they are typing.
     """
@@ -47,7 +45,7 @@ def on_click(_):
         entry.configure(foreground="white")
 
 
-def on_focus_out(_):
+def on_focus_out(_) -> None:
     """
         Changes the input text to gray again after checking that there is no possible input.
     """
@@ -59,7 +57,7 @@ def on_focus_out(_):
 entry.bind("<FocusIn>", on_click)
 entry.bind("<FocusOut>", on_focus_out)
 
-# search bar
+# search bar + search results
 
 listbox_frame = ttk.Frame(widgets_frame)
 listbox_frame.grid(row=1, column=0, pady=10, sticky="nsew")
@@ -86,16 +84,19 @@ h_scrollbar.pack(side="bottom", fill="x")
 my_list.pack(side="left", fill="both", expand=True)
 
 
-def update(lst):
+def update(lst: list) -> None:
     """
         Update my_list for each keystroke
+
+        Instance Attributes:
+        - lst: list which will be inserted to my_list
     """
     my_list.delete(0, "end")
     for item in lst:
         my_list.insert("end", item)
 
 
-def fill_entry(_):
+def fill_entry(_) -> None:
     """
         fill up the search bar with the selected song from my_list
     """
@@ -106,7 +107,7 @@ def fill_entry(_):
     entry.configure(foreground="white")
 
 
-def check(_):
+def check(_) -> None:
     """
         check if the typed song is in the database, and if it is, display it in my_list
     """
@@ -136,7 +137,7 @@ tree.heading("Title", text="Title")
 tree.heading("Artist", text="Artist")
 tree.heading("Score", text="Score")
 
-tree.column("Title", width=300, anchor="w")
+tree.column("Title", width=350, anchor="w")
 tree.column("Artist", width=150, anchor="center")
 tree.column("Score", width=100, anchor="e")
 
@@ -165,13 +166,15 @@ slider.set(10)  # Default value (number of recommendations)
 slider.grid(row=4, column=0, padx=5, pady=5, sticky="ew")
 
 
-def update_slider_label(val):
+def update_slider_label(val) -> None:
     """
         updates the number beside the slider_label to represent the value of n_recom
+        Instance Attributes:
+        - val: value from the slider
     """
     slider_label.config(text=f"Max number of Recommendations: {int(float(val))}")
 
-
+# update slider_label with the current n_recom value
 slider.config(command=update_slider_label)
 
 
@@ -181,15 +184,14 @@ def suggest_song() -> None:
     """
     song_input = get_input()
     n_recom = int(slider.get())
-    # TODO: remove ts later
-    print(song_input)
 
     my_list.selection_clear(0, tk.END)
 
     # firstly, clear the previous values
     for item in tree.get_children():
         tree.delete(item)
-
+    
+    # case: when u mistakenly click the recommend button twice or dont select a song
     if not song_input:
         tree.insert("", "end", values=("You must select a song from the list!", "-", "-"))
         return
@@ -197,15 +199,14 @@ def suggest_song() -> None:
     song_list = recommendation_system.generate_recommendations(song_input, 10)
     song_list = song_list[:n_recom]
 
+    # case: no recommendations
     if not song_list:
         tree.insert("", "end", values=("No similar songs found :(", "", ""))
         return
 
     # Now, we need to update the treeview.
-    i = 1
-    print(song_list)
+    # best_score = first score, which is the best recommendation
     best_score = song_list[00][2]
-    print(best_score)
 
     def star(value: int) -> str:
         """
@@ -223,7 +224,7 @@ def suggest_song() -> None:
             return "⭐⭐"
         else:
             return "⭐"
-
+    i = 1
     for item in song_list:
         tag = 'even' if i % 2 == 0 else 'odd'
         tree.insert("", "end", values=(item[0], item[1], star(item[2])), tags=(tag,))
