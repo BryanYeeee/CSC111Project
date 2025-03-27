@@ -16,16 +16,19 @@ class RecommendationSystem:
     Instance Attributes:
         - graph: SongGraph object that contains the song graph
         - song_list_names: a dictionary mapping song names to its vertex id in graph
+        - tree: SongDecisionTree object that contains the decision tree
+        - genres: a list of all the genres in graph
     """
     graph: SongGraph
     song_list_names: dict[str, str]
     tree: SongDecisionTree
+    genres: list[str]
 
     def __init__(self):
         """
         Initialize the RecommendationSystem class and generate the song graph.
         """
-        self.graph, self.song_list_names, self.tree = generate_song_graph()
+        self.graph, self.song_list_names, self.tree, self.genres = generate_song_graph()
 
     def obtain_vertex_id(self, given_input: Optional[str | list]) -> Optional[str]:
         """

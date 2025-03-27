@@ -4,8 +4,10 @@
 
 import tkinter as tk
 from tkinter import ttk, Listbox
+from typing import Optional
 
 from RecommendationSystem import RecommendationSystem
+from SongDecisionTree import organize_levels
 
 recommendation_system = RecommendationSystem()
 song_list_names = list(recommendation_system.song_list_names.keys())
@@ -481,19 +483,20 @@ slider_tempo.config(command=update_tempo_label)
 genre_label = ttk.Label(dt_widget, text="Genre")
 genre_label.grid(row=10, column=1, padx=5, pady=5, sticky="w")
 
-genres = ['Acoustic', 'Afrobeat', 'Alt-rock', 'Alternative', 'Ambient', 'Anime', 'Black-metal', 'Bluegrass', 'Blues',
-          'Brazil', 'Breakbeat', 'British', 'Cantopop', 'Chicago-house', 'Children', 'Chill', 'Classical', 'Club',
-          'Comedy', 'Country', 'Dance', 'Dancehall', 'Death-metal', 'Deep-house', 'Detroit-techno', 'Disco', 'Disney',
-          'Drum-and-bass', 'Dub', 'Dubstep', 'Edm', 'Electro', 'Electronic', 'Emo', 'Folk', 'Forro', 'French', 'Funk',
-          'Garage', 'German', 'Gospel', 'Goth', 'Grindcore', 'Groove', 'Grunge', 'Guitar', 'Happy', 'Hard-rock',
-          'Hardcore', 'Hardstyle', 'Heavy-metal', 'Hip-hop', 'Honky-tonk', 'House', 'Idm', 'Indian', 'Indie',
-          'Indie-pop', 'Industrial', 'Iranian', 'J-dance', 'J-idol', 'J-pop', 'J-rock', 'Jazz', 'K-pop', 'Kids',
-          'Latin', 'Latino', 'Malay', 'Mandopop', 'Metal', 'Metalcore', 'Minimal-techno', 'Mpb', 'New-age', 'Opera',
-          'Pagode', 'Party', 'Piano', 'Pop', 'Pop-film', 'Power-pop', 'Progressive-house', 'Psych-rock', 'Punk',
-          'Punk-rock', 'R&b', 'R-n-b', 'Rap', 'Reggae', 'Reggaeton', 'Rock', 'Rock-n-roll', 'Rockabilly', 'Romance',
-          'Sad', 'Salsa', 'Samba', 'Sertanejo', 'Show-tunes', 'Singer-songwriter', 'Ska', 'Sleep', 'Songwriter',
-          'Soul', 'Spanish', 'Study', 'Swedish', 'Synth-pop', 'Tango', 'Techno', 'Trance', 'Trip-hop', 'Turkish',
-          'World-music']
+genres = [
+    'World-music', 'Country', 'Industrial', 'Trance', 'Club', 'Goth', 'Piano', 
+    'Comedy', 'Techno', 'Honky-tonk', 'Edm', 'Show-tunes', 'Happy', 'Pagode', 
+    'Children', 'Malay', 'Party', 'German', 'Indie', 'Sleep', 'Songwriter', 'Sad', 
+    'Dubstep', 'Disney', 'Jazz', 'Grindcore', 'New-age', 'Salsa', 'Study', 'Latino', 
+    'Grunge', 'J-dance', 'Rock', 'Emo', 'Classical', 'Dance', 'Turkish', 'Drum-and-bass', 
+    'Indian', 'Samba', 'Idm', 'Mpb', 'Hip-hop', 'Latin', 'Soul', 'Alternative', 'Electro', 
+    'French', 'Spanish', 'Punk', 'Tango', 'Funk', 'Chill', 'R-n-b', 'Breakbeat', 'Forro', 
+    'British', 'Metal', 'Bluegrass', 'Guitar', 'Sertanejo', 'Iranian', 'Anime', 'Brazil', 
+    'J-idol', 'Folk', 'Hardstyle', 'Dub', 'Gospel', 'Groove', 'Disco', 'Trip-hop', 'Opera', 
+    'Blues', 'Hardcore', 'Electronic', 'Reggae', 'Dancehall', 'Swedish', 'Ambient', 'Afrobeat', 
+    'Kids', 'Acoustic', 'Garage', 'House', 'Pop', 'Ska', 'Romance'
+]
+
 
 genre_name = ttk.Combobox(dt_widget, values=genres, state="readonly", width=30)
 genre_name.grid(row=11, column=1, padx=5, pady=5, sticky="w")
@@ -523,16 +526,17 @@ def get_slider():
     ]
 
     # u can modify this as needed to get the values
-    attribute_range = [1, 1, 1, -10, 1, 1, 1, 1, 1, 1, 250]
+    attribute_range = [1, 1, 11, -10, 1, 1, 1, 1, 1, 1, 250]
 
     final_value = []
 
     for i in range(len(slider_value)):
         assert len(slider_value) == len(attribute_range)
-        attribute = (slider_value[i] / 10) * attribute_range[i]
+        attribute = (slider_value[i] / 5) * attribute_range[i]
         final_value.append(attribute)
+
     # change this to whatever the decision tree needs
-    print(final_value + [genre_name.get().lower()])
+    suggest_and_show_songs(organize_levels(*final_value, genre_name.get().lower()), 10)
 
 
 accent_button_slider = ttk.Button(dt_widget, text="Recommend New Songs!", style="Accent.TButton",
@@ -599,17 +603,24 @@ def suggest_song() -> None:
 
     my_list.selection_clear(0, tk.END)
 
+    suggest_and_show_songs(song_input, n_recom)
+
+def suggest_and_show_songs(given_input: Optional[str | list], recommended_count: int):
+    """
+    Given the user input, generate the song recommendations.
+    """
+    print(given_input)
     # firstly, clear the previous values
     for item in tree.get_children():
         tree.delete(item)
-
+    
     # case: when u mistakenly click the recommend button twice or don't select a song
-    if not song_input:
+    if not given_input:
         tree.insert("", "end", values=("You must select a song from the list!", "-", "-"))
         return
 
-    song_list = recommendation_system.generate_recommendations(song_input, 10)
-    song_list = song_list[:n_recom]
+    song_list = recommendation_system.generate_recommendations(given_input, 10)
+    song_list = song_list[:recommended_count]
 
     # case: no recommendations
     if not song_list:

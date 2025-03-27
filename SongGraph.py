@@ -296,7 +296,6 @@ class SongGraph:
         del shortest_distance[orig_vertex_id]
         res = [(key, shortest_distance[key]) for key in shortest_distance]
         res.sort(key=lambda x: x[1])
-        print(res)
         return res[:n]
 
     def to_networkx(self, max_vertices: int = 5000) -> nx.Graph:

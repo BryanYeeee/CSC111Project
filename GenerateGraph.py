@@ -3,14 +3,19 @@ This module processes csv dataset files to generate the necessary objects to be 
 """
 import csv
 from SongGraph import SongGraph
-from SongDecisionTree import SongDecisionTree
+from SongDecisionTree import SongDecisionTree, organize_levels, round_values
 from networkx_visual import visualize_graph
+
+DEFAULT_ORDER = ["danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness",
+                 "instrumentalness", "liveness", "valence", "tempo", "genre"]
 
 DATASET_NAME_1 = "datasets/kaggle_spotify_songs_1.csv"
 DATASET_NAME_2 = "datasets/kaggle_spotify_songs_2.csv"
-SONG_LIMIT_1 = 1
-SONG_LIMIT_2 = 50
-INTERVAL = (SONG_LIMIT_1 + SONG_LIMIT_2)//10
+FILE_LENGTH_1 = 113999
+FILE_LENGTH_2 = 32833
+SONG_LIMIT_1 = 6000
+SONG_LIMIT_2 = 4000
+INTERVAL = 1
 
 BASE_GENRES = {"pop", "rock", "techno", "metal", "house", "reggae", "songwriter"}
 SAME_GENRES = {"rap": "hip-hop", "r&b": "r-n-b"}
@@ -38,7 +43,7 @@ def add_to_objects(vertex_id: str, name: str, artists: set[str],
         new_graph: SongGraph,
         song_list_names: dict[str, str], 
         new_tree: SongDecisionTree,
-        limit: int):
+        limit: int) -> str:
     """
     Add a song to the graph and tree if it has not been added yet. 
     Also add it to the dictionary of song names and artists.
@@ -57,9 +62,10 @@ def add_to_objects(vertex_id: str, name: str, artists: set[str],
             values = [danceability, energy, key, loudness, mode, speechiness, acousticness, \
                 instrumentalness, liveness, valence, tempo]
             values = list(map(float, values))
-            values.append(genre)
-            values.append(vertex_id)
-            new_tree.insert_song(values)
+
+            new_tree.insert_song(round_values(organize_levels(*values, genre)) + [vertex_id])
+    return genre
+
 
 def generate_song_graph() -> tuple[SongGraph, dict[str, str], SongDecisionTree]:
     """
@@ -72,39 +78,45 @@ def generate_song_graph() -> tuple[SongGraph, dict[str, str], SongDecisionTree]:
     new_tree = SongDecisionTree('', [])
     song_list_names = {}
     songs_added = set()
-    limit = SONG_LIMIT_1
+    limit = 0
+    total = 0
+    genres = set()
 
     print("start")
     with open(DATASET_NAME_1, 'r', encoding="utf-8") as file:
         reader = csv.reader(file)
         next(reader)
-        for row in reader:
-            add_to_objects(row[1], row[4], row[2], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], \
-                row[20], songs_added, new_graph, song_list_names, new_tree, limit)
+        reader = list(reader)
+        while limit < len(reader):
+            row = reader[limit]
+            genres.add(add_to_objects(row[1], row[4], row[2], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], \
+                row[20], songs_added, new_graph, song_list_names, new_tree, limit))
             if limit % 1000 == 0:
                 print(limit)
-            limit = limit - 1
-            if limit == 0:
-                break
+            limit += FILE_LENGTH_1//SONG_LIMIT_1
+            total += 1
     print("first file done")
 
-    limit = SONG_LIMIT_2
+    limit = 0
 
     with open(DATASET_NAME_2, 'r', encoding="utf-8") as file:
         reader = csv.reader(file)
         next(reader)
-        for row in reader:
-            add_to_objects(
+        reader = list(reader)
+        while limit < len(reader):
+            row = reader[limit]
+            genres.add(add_to_objects(
                 row[0], row[1], row[2], row[11], row[12], row[13],
                 row[14], row[15], row[16], row[17], row[18], row[19],
                 row[20], row[21], row[9], songs_added, new_graph, song_list_names, new_tree, limit
-            )
-            limit = limit - 1
+            ))
             if limit % 1000 == 0:
                 print(limit)
-            if limit == 0:
-                break
-    return new_graph, song_list_names, new_tree
+            limit += FILE_LENGTH_2//SONG_LIMIT_2
+            total += 1
+    print(total)
+
+    return new_graph, song_list_names, new_tree, genres
 
 
 if __name__ == '__main__':
