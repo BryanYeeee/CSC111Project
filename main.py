@@ -16,9 +16,6 @@ root = tk.Tk()
 root.title("🎶")
 root.option_add("*tearOff", False)
 
-# root.columnconfigure(0, weight=1)
-# root.columnconfigure(1, weight=3)
-# root.rowconfigure(0, weight=1)
 
 # Styling, import theme
 style = ttk.Style(root)
@@ -483,26 +480,20 @@ slider_tempo.config(command=update_tempo_label)
 genre_label = ttk.Label(dt_widget, text="Genre")
 genre_label.grid(row=10, column=1, padx=5, pady=5, sticky="w")
 
-genres = [
-    'World-music', 'Country', 'Industrial', 'Trance', 'Club', 'Goth', 'Piano', 
-    'Comedy', 'Techno', 'Honky-tonk', 'Edm', 'Show-tunes', 'Happy', 'Pagode', 
-    'Children', 'Malay', 'Party', 'German', 'Indie', 'Sleep', 'Songwriter', 'Sad', 
-    'Dubstep', 'Disney', 'Jazz', 'Grindcore', 'New-age', 'Salsa', 'Study', 'Latino', 
-    'Grunge', 'J-dance', 'Rock', 'Emo', 'Classical', 'Dance', 'Turkish', 'Drum-and-bass', 
-    'Indian', 'Samba', 'Idm', 'Mpb', 'Hip-hop', 'Latin', 'Soul', 'Alternative', 'Electro', 
-    'French', 'Spanish', 'Punk', 'Tango', 'Funk', 'Chill', 'R-n-b', 'Breakbeat', 'Forro', 
-    'British', 'Metal', 'Bluegrass', 'Guitar', 'Sertanejo', 'Iranian', 'Anime', 'Brazil', 
-    'J-idol', 'Folk', 'Hardstyle', 'Dub', 'Gospel', 'Groove', 'Disco', 'Trip-hop', 'Opera', 
-    'Blues', 'Hardcore', 'Electronic', 'Reggae', 'Dancehall', 'Swedish', 'Ambient', 'Afrobeat', 
-    'Kids', 'Acoustic', 'Garage', 'House', 'Pop', 'Ska', 'Romance'
-]
-
+genres = ['-', 'Acoustic', 'Afrobeat', 'Alternative', 'Ambient', 'Anime', 'Bluegrass', 'Blues', 'Brazil', 'Breakbeat',
+          'British', 'Children', 'Chill', 'Classical', 'Club', 'Comedy', 'Country', 'Dance', 'Dancehall', 'Disco',
+          'Disney', 'Drum-and-bass', 'Dub', 'Dubstep', 'Edm', 'Electro', 'Electronic', 'Emo', 'Folk', 'Forro',
+          'French', 'Funk', 'Garage', 'German', 'Gospel', 'Goth', 'Grindcore', 'Groove', 'Grunge', 'Guitar', 'Happy',
+          'Hardcore', 'Hardstyle', 'Hip-hop', 'Honky-tonk', 'House', 'Idm', 'Indian', 'Indie', 'Industrial', 'Iranian',
+          'J-dance', 'J-idol', 'Jazz', 'Kids', 'Latin', 'Latino', 'Malay', 'Metal', 'Mpb', 'New-age', 'Opera',
+          'Pagode', 'Party', 'Piano', 'Pop', 'Punk', 'R-n-b', 'Reggae', 'Rock', 'Romance', 'Sad', 'Salsa', 'Samba',
+          'Sertanejo', 'Show-tunes', 'Ska', 'Sleep', 'Songwriter', 'Soul', 'Spanish', 'Study', 'Swedish', 'Tango',
+          'Techno', 'Trance', 'Trip-hop', 'Turkish', 'World-music']
 
 genre_name = ttk.Combobox(dt_widget, values=genres, state="readonly", width=30)
 genre_name.grid(row=11, column=1, padx=5, pady=5, sticky="w")
 
 
-# TODO: ADD DECISION TREE STUFF FROM BACKEND
 def get_slider():
     """
         Gets the value from all the attribute sliders + genre name
@@ -603,7 +594,9 @@ def suggest_song() -> None:
 
     my_list.selection_clear(0, tk.END)
 
+    update(song_list_names)
     suggest_and_show_songs(song_input, n_recom)
+
 
 def suggest_and_show_songs(given_input: Optional[str | list], recommended_count: int):
     """
@@ -613,7 +606,7 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
     # firstly, clear the previous values
     for item in tree.get_children():
         tree.delete(item)
-    
+
     # case: when u mistakenly click the recommend button twice or don't select a song
     if not given_input:
         tree.insert("", "end", values=("You must select a song from the list!", "-", "-"))
