@@ -276,21 +276,26 @@ vw_scrollbar.pack(side="right", fill="y")
 hw_scrollbar.pack(side="bottom", fill="x")
 web_list.pack(side="left", fill="both", expand=True)
 
+web_links = {}
 
 def search_web():
     """
         Gets the name of the song and webscrapes
     """
+    global web_links
+    web_list.delete(0,web_list.size())
     song_name = entry_web.get()
     if song_name != placeholder_text:
         entry_web.delete(0, tk.END)
         entry_web.insert(0, placeholder_text)
         entry_web.configure(foreground="grey")
-    # TODO add webscraping stuff
-    # TODO assume list returned is search_list
-    search_list = ["1", "2", "3", "4", "5"]
-    for item in search_list:
-        web_list.insert("end", item)
+    song_links = song_finder.get_song_links(song_name)
+    for link in song_links:
+        element = song_finder.get_title_artist(link)
+        item = element[0] + " | " + element[1]
+        if item not in web_links:
+            web_list.insert("end", item)
+            web_links[item] = link
 
 
 search_web_button = ttk.Button(web_widgets, text="Search Web", style="Accent.TButton",
@@ -302,9 +307,8 @@ def get_web():
     """
         gets web
     """
-    # TODO modify as needed
-    song_name = web_list.get(web_list.curselection())  # this returns the song which u clicked on
-    song_link = song_finder.get_song_links(song_name)[0]
+    song_name = web_list.get(web_list.curselection()) # this returns the song which u clicked on
+    song_link = web_links[song_name]
     properties = song_finder.get_song_properties(song_link)
     properties_to_list = [properties[feature] for feature in properties]
     suggest_and_show_songs(organize_levels(*properties_to_list[3:]), 10)

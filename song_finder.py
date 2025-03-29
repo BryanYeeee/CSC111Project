@@ -58,7 +58,7 @@ def get_song_genre(song_name: str, artist: str) -> str:
         return GenerateGraph.filter_genre(genre)
 
 
-def get_title_artist(song_page_url: str) -> tuple[str, list]:
+def get_title_artist(song_page_url: str) -> tuple[str, str]:
     """
     Gets the title and artist of a song by scraping a songdata.io url link
     Precondition:
@@ -72,7 +72,6 @@ def get_title_artist(song_page_url: str) -> tuple[str, list]:
     col12_div = col12.find_all("div")
 
     track_name, artists = col12_div[0].text, col12_div[1].text
-    artists = artists.split(", ")
     return (track_name, artists)
 
 
@@ -93,6 +92,7 @@ def get_song_properties(song_page_url: str) -> dict:
     try:
         song_id = re.search(r'/track/([a-zA-Z0-9]+)', song_page_url).group(1)
         track_name, artists = get_title_artist(song_page_url)
+        artists = artists.split(", ")
         track_genre = get_song_genre(track_name, artists[0])
 
     except:
