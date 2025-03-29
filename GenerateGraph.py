@@ -17,21 +17,21 @@ SONG_LIMIT_1 = 6000
 SONG_LIMIT_2 = 4000
 INTERVAL = 1
 
-BASE_GENRES = {"pop", "rock", "techno", "metal", "house", "reggae", "songwriter"}
+BASE_GENRES = {"pop", "rock", "techno", "metal", "house", "reggae", "songwriter", "rap"}
 SAME_GENRES = {"rap": "hip-hop", "r&b": "r-n-b"}
 
-SEARCH_BAR_SPLITTER = "｜" 
+SEARCH_BAR_SPLITTER = "｜"
 
 
 def filter_genre(genre: str) -> str:
     """
     Given a genre, filter it to a base or common genre if possible.
     """
-    if genre in SAME_GENRES:
-        return SAME_GENRES[genre]
     for base_genre in BASE_GENRES:
         if base_genre in genre:
-            return base_genre
+            genre = base_genre
+    if genre in SAME_GENRES:
+        return SAME_GENRES[genre]
     return genre
 
 def add_to_objects(vertex_id: str, name: str, artists: set[str],
@@ -39,13 +39,13 @@ def add_to_objects(vertex_id: str, name: str, artists: set[str],
         mode: str, speechiness: str, acousticness: str,
         instrumentalness: str, liveness: str, valence: str,
         tempo: str, genre: str,
-        songs_added: set, 
+        songs_added: set,
         new_graph: SongGraph,
-        song_list_names: dict[str, str], 
+        song_list_names: dict[str, str],
         new_tree: SongDecisionTree,
         limit: int) -> str:
     """
-    Add a song to the graph and tree if it has not been added yet. 
+    Add a song to the graph and tree if it has not been added yet.
     Also add it to the dictionary of song names and artists.
     """
     song_name = name + SEARCH_BAR_SPLITTER + artists
