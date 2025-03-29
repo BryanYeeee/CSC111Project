@@ -6,7 +6,6 @@ some stuffs
 from __future__ import annotations
 import heapq
 from typing import Any
-import networkx as nx
 
 SIMILARITY_WEIGHTING = {
     "genre": 4.0,
@@ -25,6 +24,7 @@ SIMILARITY_WEIGHTING = {
 # The max limit at which a similarity score can be in order to add an edge
 SCORE_LIMIT = 2.25
 
+
 class _Vertex:
     """A Vertex representing a song in the graph.
 
@@ -33,7 +33,7 @@ class _Vertex:
 
     Instance Attributes:
         - vertex_id: A unique identifier for the song.
-        - track_name: The name of the song.
+        - name: The name of the song.
         - artists: A set of artists associated with the song.
         - danceability: The danceability score of the song.
         - energy: The energy level of the song.
@@ -62,7 +62,7 @@ class _Vertex:
         - 0 <= tempo
     """
     vertex_id: str
-    track_name: str
+    name: str
     artists: set[str]
     danceability: float
     energy: float
@@ -79,11 +79,11 @@ class _Vertex:
     neighbours: dict[_Vertex, float]
 
     def __init__(
-        self, vertex_id: str, name: str, artists: set[str],
-        danceability: str, energy: str, key: str, loudness: str,
-        mode: int, speechiness: str, acousticness: str,
-        instrumentalness: str, liveness: str, valence: str,
-        tempo: str, track_genre: str
+            self, vertex_id: str, name: str, artists: set[str],
+            danceability: str, energy: str, key: str, loudness: str,
+            mode: int, speechiness: str, acousticness: str,
+            instrumentalness: str, liveness: str, valence: str,
+            tempo: str, track_genre: str
     ) -> None:
         """ Initialize a new vertex based on the given data"""
         self.vertex_id = vertex_id
@@ -157,11 +157,11 @@ class SongGraph:
         self._vertices = {}
 
     def add_vertex(
-        self, vertex_id: str, name: str, artists: set[str],
-        danceability: str, energy: str, key: str, loudness: str,
-        mode: str, speechiness: str, acousticness: str,
-        instrumentalness: str, liveness: str, valence: str,
-        tempo: str, track_genre: str
+            self, vertex_id: str, name: str, artists: set[str],
+            danceability: str, energy: str, key: str, loudness: str,
+            mode: str, speechiness: str, acousticness: str,
+            instrumentalness: str, liveness: str, valence: str,
+            tempo: str, track_genre: str
     ) -> None:
         """Add a vertex
 
@@ -266,7 +266,7 @@ class SongGraph:
         """Returns the average number of edges per vertex.
         Used to decide a value for the SCORE_LIMIT constant
         """
-        return sum(len(self._vertices[vid].neighbours) for vid in self._vertices)/(len(self._vertices))
+        return sum(len(self._vertices[vid].neighbours) for vid in self._vertices) / (len(self._vertices))
 
     def find_shortest_distance(self, orig_vertex_id: str, n: int) -> list[str, float]:
         """
@@ -297,27 +297,3 @@ class SongGraph:
         res = [(key, shortest_distance[key]) for key in shortest_distance]
         res.sort(key=lambda x: x[1])
         return res[:n]
-
-    def to_networkx(self, max_vertices: int = 5000) -> nx.Graph:
-        """Convert this graph into a networkx Graph.
-
-        max_vertices specifies the maximum number of vertices that can appear in the graph.
-        (This is necessary to limit the visualization output for large graphs.)
-
-        Note that this method is provided for you, and you shouldn't change it.
-        """
-        graph_nx = nx.Graph()
-        for v in self._vertices.values():
-            graph_nx.add_node(v.vertex_id)
-
-            for u in v.neighbours:
-                if graph_nx.number_of_nodes() < max_vertices:
-                    graph_nx.add_node(u.vertex_id)
-
-                if u.vertex_id in graph_nx.nodes:
-                    graph_nx.add_edge(v.vertex_id, u.vertex_id)
-
-            if graph_nx.number_of_nodes() >= max_vertices:
-                break
-
-        return graph_nx
