@@ -7,41 +7,44 @@ from __future__ import annotations
 import random
 from typing import Any, Optional
 
-def organize_levels(danceability, energy, key, loudness, mode, speechiness, acousticness, \
-                instrumentalness, liveness, valence, tempo, genre) -> list:
+
+def organize_levels(danceability: Any, energy: Any, key: Any, loudness: Any, mode: Any, speechiness: Any,
+                    acousticness: Any, instrumentalness: Any, liveness: Any, valence: Any,
+                    tempo: Any, genre: Any) -> list:
     """
     Organize the song characteristics into a list based on the weights of each feature.
     The value of the weights can be seen in SongGraph.py
     """
-    return [genre, danceability, energy, valence, key, tempo, instrumentalness, mode, acousticness, loudness, liveness, speechiness]
-    
+    return [genre, danceability, energy, valence, key, tempo, instrumentalness, mode, acousticness, loudness, liveness,
+            speechiness]
 
-NODES_PER_LEVEL = organize_levels( 
-    [x * 0.1 for x in range(0, 11)], 
-    [x * 0.1 for x in range(0, 11)], 
-    [x for x in range(0, 12)], 
-    [x for x in range(-10, 0)],
-    [0, 1], 
+
+NODES_PER_LEVEL = organize_levels(
+    [x * 0.1 for x in range(0, 11)],
+    [x * 0.1 for x in range(0, 11)],
+    list(range(0, 12)),
+    list(range(-10, 0)),
+    [0, 1],
     [x * 0.01 for x in range(0, 11)],
-    [x * 0.1 for x in range(7)], 
-    [x * 0.1 for x in range(0, 4)], 
+    [x * 0.1 for x in range(7)],
+    [x * 0.1 for x in range(0, 4)],
     [x * 0.1 for x in range(0, 5)],
-    [x * 0.1 for x in range(0, 11)], 
-    [x * 10 for x in range(0, 24)], 
+    [x * 0.1 for x in range(0, 11)],
+    [x * 10 for x in range(0, 24)],
     [
-    'World-music', 'Country', 'Industrial', 'Trance', 'Club', 'Goth', 'Piano', 
-    'Comedy', 'Techno', 'Honky-tonk', 'Edm', 'Show-tunes', 'Happy', 'Pagode', 
-    'Children', 'Malay', 'Party', 'German', 'Indie', 'Sleep', 'Songwriter', 'Sad', 
-    'Dubstep', 'Disney', 'Jazz', 'Grindcore', 'New-age', 'Salsa', 'Study', 'Latino', 
-    'Grunge', 'J-dance', 'Rock', 'Emo', 'Classical', 'Dance', 'Turkish', 'Drum-and-bass', 
-    'Indian', 'Samba', 'Idm', 'Mpb', 'Hip-hop', 'Latin', 'Soul', 'Alternative', 'Electro', 
-    'French', 'Spanish', 'Punk', 'Tango', 'Funk', 'Chill', 'R-n-b', 'Breakbeat', 'Forro', 
-    'British', 'Metal', 'Bluegrass', 'Guitar', 'Sertanejo', 'Iranian', 'Anime', 'Brazil', 
-    'J-idol', 'Folk', 'Hardstyle', 'Dub', 'Gospel', 'Groove', 'Disco', 'Trip-hop', 'Opera', 
-    'Blues', 'Hardcore', 'Electronic', 'Reggae', 'Dancehall', 'Swedish', 'Ambient', 'Afrobeat', 
-    'Kids', 'Acoustic', 'Garage', 'House', 'Pop', 'Ska', 'Romance'
-    ]    
-    )
+        'World-music', 'Country', 'Industrial', 'Trance', 'Club', 'Goth', 'Piano',
+        'Comedy', 'Techno', 'Honky-tonk', 'Edm', 'Show-tunes', 'Happy', 'Pagode',
+        'Children', 'Malay', 'Party', 'German', 'Indie', 'Sleep', 'Songwriter', 'Sad',
+        'Dubstep', 'Disney', 'Jazz', 'Grindcore', 'New-age', 'Salsa', 'Study', 'Latino',
+        'Grunge', 'J-dance', 'Rock', 'Emo', 'Classical', 'Dance', 'Turkish', 'Drum-and-bass',
+        'Indian', 'Samba', 'Idm', 'Mpb', 'Hip-hop', 'Latin', 'Soul', 'Alternative', 'Electro',
+        'French', 'Spanish', 'Punk', 'Tango', 'Funk', 'Chill', 'R-n-b', 'Breakbeat', 'Forro',
+        'British', 'Metal', 'Bluegrass', 'Guitar', 'Sertanejo', 'Iranian', 'Anime', 'Brazil',
+        'J-idol', 'Folk', 'Hardstyle', 'Dub', 'Gospel', 'Groove', 'Disco', 'Trip-hop', 'Opera',
+        'Blues', 'Hardcore', 'Electronic', 'Reggae', 'Dancehall', 'Swedish', 'Ambient', 'Afrobeat',
+        'Kids', 'Acoustic', 'Garage', 'House', 'Pop', 'Ska', 'Romance'
+    ]
+)
 
 
 class SongDecisionTree:
@@ -73,7 +76,6 @@ class SongDecisionTree:
         self._root = root
         self._subtrees = subtrees
 
-
     def insert_song(self, items: list) -> None:
         """Insert the given items into this tree such that each item is the child of the item before it,
         and old subtrees are reused if the same root value is found.
@@ -99,9 +101,8 @@ class SongDecisionTree:
                 if not isinstance(closest_tree._root, str):
                     if abs(subtree._root - float(inputs[0])) < abs(closest_tree._root - float(inputs[0])):
                         closest_tree = subtree
-                else:
-                    if subtree._root == inputs[0]:
-                        return subtree.find_related_songs(inputs[1:])
+                elif subtree._root == inputs[0]:
+                    return subtree.find_related_songs(inputs[1:])
             return closest_tree.find_related_songs(inputs[1:])
         else:
             return [cur_subtree._root for cur_subtree in self._subtrees]
@@ -117,6 +118,7 @@ def create_tree(items: list) -> Optional[SongDecisionTree]:
         return SongDecisionTree(items[0], [create_tree(items[1:])])
     return None
 
+
 def round_values(inputs: list) -> list:
     """
     Given a list of inputs, round each numerical input to the closest value according to the NODES_PER_LEVEL list.
@@ -128,13 +130,11 @@ def round_values(inputs: list) -> list:
 
             if not isinstance(NODES_PER_LEVEL[i][0], str):
                 for opt in NODES_PER_LEVEL[i]:
-                    if abs(opt - float(inputs[i])) < abs(opt- float(inputs[i])):
+                    if abs(opt - float(inputs[i])) < abs(opt - float(inputs[i])):
                         closest_val = opt
-            else:
-                if inputs[i] in NODES_PER_LEVEL[i]:
+            elif inputs[i] in NODES_PER_LEVEL[i]:
                     closest_val = inputs[i]
             res.append(closest_val)
         else:
             res.append(inputs[i])
     return res
-    
