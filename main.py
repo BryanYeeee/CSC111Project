@@ -242,17 +242,59 @@ def on_focus_out_web(_) -> None:
 entry_web.bind("<FocusIn>", on_click_web)
 entry_web.bind("<FocusOut>", on_focus_out_web)
 
+web_frame = ttk.Frame(web_widgets)
+web_frame.grid(row=2, column=0, columnspan=2, pady=10, sticky="nsew")
 
-def get_web():
+# Create scrollbars
+vw_scrollbar = ttk.Scrollbar(web_frame, orient="vertical")
+hw_scrollbar = ttk.Scrollbar(web_frame, orient="horizontal")
+
+web_list = Listbox(
+    web_frame,
+    background="#383434",
+    width=50,
+    foreground="white",
+    font=("Helvetica", 15),
+    yscrollcommand=vw_scrollbar.set,
+    xscrollcommand=hw_scrollbar.set,
+    height=5
+)
+
+vw_scrollbar.config(command=my_list.yview)
+hw_scrollbar.config(command=my_list.xview)
+
+vw_scrollbar.pack(side="right", fill="y")
+hw_scrollbar.pack(side="bottom", fill="x")
+web_list.pack(side="left", fill="both", expand=True)
+
+
+def search_web():
     """
-        gets web
+        Gets the name of the song and webscrapes
     """
     song_name = entry_web.get()
     if song_name != placeholder_text:
         entry_web.delete(0, tk.END)
         entry_web.insert(0, placeholder_text)
         entry_web.configure(foreground="grey")
+    # TODO add webscraping stuff
+    # TODO assume list returned is search_list
+    search_list = ["1", "2", "3", "4", "5"]
+    for item in search_list:
+        web_list.insert("end", item)
 
+
+search_web_button = ttk.Button(web_widgets, text="Search Web", style="Accent.TButton",
+                               command=search_web)
+search_web_button.grid(row=1, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
+
+
+def get_web():
+    """
+        gets web
+    """
+    # TODO modify as needed
+    song_name = web_list.get(web_list.curselection()) # this returns the song which u clicked on
     song_link = song_finder.get_song_links(song_name)[0]
     properties = song_finder.get_song_properties(song_link)
     properties_to_list = [properties[feature] for feature in properties]
@@ -262,7 +304,7 @@ def get_web():
 
 accent_button_web = ttk.Button(web_widgets, text="Recommend New Songs!", style="Accent.TButton",
                                command=get_web)
-accent_button_web.grid(row=1, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
+accent_button_web.grid(row=5, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
 
 # Tab 3 - Decision Tree
 
