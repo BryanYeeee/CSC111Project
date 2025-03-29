@@ -100,7 +100,6 @@ my_selected = Listbox(
     height=7
 )
 
-
 vs_scrollbar.config(command=my_selected.yview)
 hs_scrollbar.config(command=my_selected.xview)
 
@@ -204,7 +203,6 @@ add_button.grid(row=2, column=0, padx=5, pady=10, sticky="nsew")
 remove_button = ttk.Button(widgets_frame, text="Remove Song", style="Accent.TButton", command=remove_song)
 remove_button.grid(row=2, column=1, padx=5, pady=10, sticky="nsew")
 
-
 entry.bind("<KeyRelease>", check)
 
 my_list.bind("<<ListboxSelect>>", fill_entry)
@@ -258,7 +256,7 @@ def get_web():
     song_link = song_finder.get_song_links(song_name)[0]
     properties = song_finder.get_song_properties(song_link)
     properties_to_list = [properties[feature] for feature in properties]
-    suggest_and_show_songs(organize_levels(*properties_to_list[3:]),10)
+    suggest_and_show_songs(organize_levels(*properties_to_list[3:]), 10)
     return
 
 
@@ -625,15 +623,15 @@ def get_input() -> list:
     """
     song_list = list(my_selected.get(0, "end"))
     print(song_list)
-    #TODO need to modify for lists
     return song_list
 
+
 slider_label = ttk.Label(widgets_frame, text="Max number of Recommendations: 10")
-slider_label.grid(row=4, column=0, columnspan=2,  padx=5, pady=5, sticky="w")
+slider_label.grid(row=4, column=0, columnspan=2, padx=5, pady=5, sticky="w")
 
 slider = ttk.Scale(widgets_frame, from_=1, to=10, orient="horizontal", length=200)
 slider.set(10)  # Default value (number of recommendations)
-slider.grid(row=5, column=0, columnspan=2,  padx=5, pady=5, sticky="ew")
+slider.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
 
 
 def update_slider_label(val) -> None:
@@ -715,7 +713,7 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
 # Recommend button for Database search
 accent_button = ttk.Button(widgets_frame, text="Recommend New Songs!", style="Accent.TButton",
                            command=suggest_song)
-accent_button.grid(row=6, column=0, columnspan=2,  padx=5, pady=10, sticky="nsew")
+accent_button.grid(row=6, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
 
 # Center the window, and set minsize
 root.update()
