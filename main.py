@@ -716,9 +716,8 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
         tree.insert("", "end", values=("You must select a song from the list!", "-", "-"))
         return
 
-    song_list = recommendation_system.generate_recommendations(given_input, 10)
-    song_list = song_list[:recommended_count]
-
+    song_list = recommendation_system.generate_recommendations(given_input, recommended_count)
+    print(song_list)
     # case: no recommendations
     if not song_list:
         tree.insert("", "end", values=("No similar songs found :(", "", ""))
