@@ -134,6 +134,7 @@ h_scrollbar.pack(side="bottom", fill="x")
 my_list.pack(side="left", fill="both", expand=True)
 
 
+# TODO prev_index
 def update(lst: list) -> None:
     """
         Update my_list for each keystroke
@@ -179,8 +180,11 @@ update(song_list_names)
 
 def add_song():
     """ Show selected songs"""
+    if not my_list.curselection():
+        return
     current_song = my_list.get(my_list.curselection())
     my_selected.insert("end", current_song)
+    song_list_names.remove(current_song)
     update(song_list_names)
     if current_song != placeholder_text:
         entry.delete(0, tk.END)
@@ -193,7 +197,12 @@ def remove_song():
     """
         Remove the last song from the listbox
     """
-    print("Removed")
+    last_song = my_selected.get("end")
+    if not last_song:
+        return
+    song_list_names.append(last_song)
+    update(song_list_names)
+    my_selected.delete("end")
 
 
 add_button = ttk.Button(widgets_frame, text="Add Song", style="Accent.TButton", command=add_song)
@@ -694,7 +703,7 @@ def suggest_song() -> None:
     """
         takes the input, generates a list of simillar songs, and updates the treeview
     """
-    song_input = get_input()  # TODO need to modify for lists
+    song_input = get_input()
     n_recom = int(slider.get())
 
     my_list.selection_clear(0, tk.END)
@@ -746,12 +755,29 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
             return "⭐"
 
     i = 1
-    for lst in song_list:
-        tree.insert("", "end", values=("", "", ""), tags='header')
+    if len(song_list) < 2:
+        lst = song_list[0]
         for item in lst:
             tag = 'even' if i % 2 == 0 else 'odd'
             tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), lst)), tags=(tag,))
             i += 1
+    else:
+        n = len(song_list)
+        common = song_list[0]
+        tree.insert("", "end", values=(f'Number of songs in common: {n}', "", ""), tags='header')
+        for item in common:
+            tag = 'even' if i % 2 == 0 else 'odd'
+            tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), common)), tags=(tag,))
+            i += 1
+        i = 0
+        for lst in song_list[1:]:
+            # TODO modify val to represent common song stufyf brain too fried to do ts
+            val = n
+            tree.insert("", "end", values=(f'Number of songs in common: {val}', "", ""), tags='header')
+            for item in lst:
+                tag = 'even' if i % 2 == 0 else 'odd'
+                tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), lst)), tags=(tag,))
+                i += 1
 
 
 # Recommend button for Database search
