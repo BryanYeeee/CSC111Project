@@ -113,8 +113,8 @@ def get_song_properties(song_page_url: str) -> dict:
 
     try:
         return {"song_id": song_id, "track_name": track_name, "artists": artists, "danceability": danceability,
-                "energy": energy, "key": key, "loudness": loudness, "mode": mode, "speechiness": speechiness,
+                "energy": energy, "key": key, "loudness": float(loudness), "mode": mode, "speechiness": speechiness,
                 "acousticness": acousticness, "instrumentalness": instrumentalness, "liveness": liveness,
-                "valence": valence, "tempo": tempo, "track_genre": track_genre}
+                "valence": valence, "tempo": int(tempo), "track_genre": track_genre}
     except:
         return {}

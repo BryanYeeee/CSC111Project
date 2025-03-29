@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import ttk, Listbox
 from typing import Optional
 
+import song_finder
 from RecommendationSystem import RecommendationSystem
 from SongDecisionTree import organize_levels
 
@@ -198,9 +199,10 @@ def get_web():
         entry_web.insert(0, placeholder_text)
         entry_web.configure(foreground="grey")
 
-
-    #TODO: use song_name to generate the list and return it
-
+    song_link = song_finder.get_song_links(song_name)[0]
+    properties = song_finder.get_song_properties(song_link)
+    properties_to_list = [properties[feature] for feature in properties]
+    suggest_and_show_songs(organize_levels(*properties_to_list[3:]),10)
     return
 
 
