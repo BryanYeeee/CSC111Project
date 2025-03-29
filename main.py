@@ -16,7 +16,6 @@ root = tk.Tk()
 root.title("🎶")
 root.option_add("*tearOff", False)
 
-
 # Styling, import theme
 style = ttk.Style(root)
 root.tk.call("source", "forest-dark.tcl")
@@ -49,6 +48,8 @@ tab1 = ttk.Frame(tabs)
 tabs.add(tab1, text="Search Database")
 
 widgets_frame = ttk.Frame(tab1, padding=(0, 0, 0, 10))
+widgets_frame.columnconfigure(0, weight=1)
+widgets_frame.columnconfigure(1, weight=1)
 widgets_frame.pack(padx=10, pady=10, fill="both", expand=True)
 
 # Entry field
@@ -79,10 +80,37 @@ def on_focus_out(_) -> None:
 entry.bind("<FocusIn>", on_click)
 entry.bind("<FocusOut>", on_focus_out)
 
+# selected song listbox
+
+selected_frame = ttk.Frame(widgets_frame)
+selected_frame.grid(row=1, column=0, columnspan=2, pady=10, sticky="nsew")
+
+vs_scrollbar = ttk.Scrollbar(selected_frame, orient="vertical")
+hs_scrollbar = ttk.Scrollbar(selected_frame, orient="horizontal")
+
+my_selected = Listbox(
+    selected_frame,
+    background="#383434",
+    width=50,
+    foreground="white",
+    font=("Helvetica", 15),
+    yscrollcommand=vs_scrollbar.set,
+    xscrollcommand=hs_scrollbar.set,
+    height=7
+)
+
+
+vs_scrollbar.config(command=my_selected.yview)
+hs_scrollbar.config(command=my_selected.xview)
+
+vs_scrollbar.pack(side="right", fill="y")
+hs_scrollbar.pack(side="bottom", fill="x")
+my_selected.pack(side="left", fill="both", expand=True)
+
 # search bar + search results
 
 listbox_frame = ttk.Frame(widgets_frame)
-listbox_frame.grid(row=1, column=0, pady=10, sticky="nsew")
+listbox_frame.grid(row=3, column=0, columnspan=2, pady=10, sticky="nsew")
 
 # Create scrollbars
 v_scrollbar = ttk.Scrollbar(listbox_frame, orient="vertical")
@@ -147,6 +175,34 @@ def check(_) -> None:
 
 
 update(song_list_names)
+
+
+def add_song():
+    """ Show selected songs"""
+    current_song = my_list.get(my_list.curselection())
+    my_selected.insert("end", current_song)
+    update(song_list_names)
+    if current_song != placeholder_text:
+        entry.delete(0, tk.END)
+        entry.insert(0, placeholder_text)
+        entry.configure(foreground="grey")
+    print(current_song)
+
+
+def remove_song():
+    """
+        Remove the last song from the listbox
+    """
+    print("Removed")
+
+
+add_button = ttk.Button(widgets_frame, text="Add Song", style="Accent.TButton", command=add_song)
+add_button.grid(row=2, column=0, padx=5, pady=10, sticky="nsew")
+
+# "Remove Song" button
+remove_button = ttk.Button(widgets_frame, text="Remove Song", style="Accent.TButton", command=remove_song)
+remove_button.grid(row=2, column=1, padx=5, pady=10, sticky="nsew")
+
 
 entry.bind("<KeyRelease>", check)
 
@@ -552,24 +608,21 @@ tree.tag_configure('even', background='#191c1a')
 tree.tag_configure('odd', background='#2d302d')
 
 
-def get_input() -> str:
+def get_input() -> list:
     """
         Gets the text input from the user, after they click the recommend button.
     """
-    song_name = entry.get()
-    if song_name != placeholder_text:
-        entry.delete(0, tk.END)
-        entry.insert(0, placeholder_text)
-        entry.configure(foreground="grey")
-        return song_name
-
+    song_list = list(my_selected.get(0, "end"))
+    print(song_list)
+    #TODO need to modify for lists
+    return song_list
 
 slider_label = ttk.Label(widgets_frame, text="Max number of Recommendations: 10")
-slider_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+slider_label.grid(row=4, column=0, columnspan=2,  padx=5, pady=5, sticky="w")
 
 slider = ttk.Scale(widgets_frame, from_=1, to=10, orient="horizontal", length=200)
 slider.set(10)  # Default value (number of recommendations)
-slider.grid(row=4, column=0, padx=5, pady=5, sticky="ew")
+slider.grid(row=5, column=0, columnspan=2,  padx=5, pady=5, sticky="ew")
 
 
 def update_slider_label(val) -> None:
@@ -589,7 +642,7 @@ def suggest_song() -> None:
     """
         takes the input, generates a list of simillar songs, and updates the treeview
     """
-    song_input = get_input()
+    song_input = get_input()  # TODO need to modify for lists
     n_recom = int(slider.get())
 
     my_list.selection_clear(0, tk.END)
@@ -651,7 +704,7 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
 # Recommend button for Database search
 accent_button = ttk.Button(widgets_frame, text="Recommend New Songs!", style="Accent.TButton",
                            command=suggest_song)
-accent_button.grid(row=5, column=0, padx=5, pady=10, sticky="nsew")
+accent_button.grid(row=6, column=0, columnspan=2,  padx=5, pady=10, sticky="nsew")
 
 # Center the window, and set minsize
 root.update()
