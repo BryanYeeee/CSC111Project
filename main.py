@@ -192,6 +192,15 @@ def get_web():
     """
         gets web
     """
+    song_name = entry_web.get()
+    if song_name != placeholder_text:
+        entry_web.delete(0, tk.END)
+        entry_web.insert(0, placeholder_text)
+        entry_web.configure(foreground="grey")
+
+
+    #TODO: use song_name to generate the list and return it
+
     return
 
 

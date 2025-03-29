@@ -6,6 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote
 import re
+import GenerateGraph
 
 PARENT_URL = "https://songdata.io"
 CAMELOT_TO_KEY = {
@@ -32,6 +33,31 @@ def get_song_links(song_input: str) -> list:
     return [PARENT_URL + quote(td.find("a")["href"]) for td in links]
 
 
+def get_song_genre(song_name: str, artist: str) -> str:
+    """
+    Return's the song genre, bsed on the song_name and artist arguments
+    by webscraping a wikipedia page, or returns an empty string if the page or genre isn't found.
+    """
+    clean_name = re.sub(r"\s*(feat\.?|ft\.?).*", "", song_name, flags=re.IGNORECASE).strip()
+    api_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={quote(clean_name + " " + artist)}%20song&format=json"
+    print(api_url)
+    data = requests.get(api_url).json()
+
+    if data["query"]["search"]:
+        page_title = quote(data["query"]["search"][0]["title"])
+        page_url = f"https://en.wikipedia.org/wiki/{page_title}"
+        print("Wikipedia Page:", page_url)
+        song_data_page = requests.get(page_url)
+        genre_soup = BeautifulSoup(song_data_page.text, "html.parser")
+        try:
+            genre_row = genre_soup.find("th", string="Genre")
+            genre = genre_row.find_next_sibling("td").text
+            genre = genre.strip().split("\n")[0].lower()
+        except:
+            return ''
+        return GenerateGraph.filter_genre(genre)
+
+
 def get_song_properties(song_page_url: str) -> dict:
     """
     Gets properties of a song by scraping the song page URL on songdata.io.
@@ -39,23 +65,21 @@ def get_song_properties(song_page_url: str) -> dict:
     Preconditions:
         - song_page_url: A valid URL from songdata.io that points to a specific song's page.
     """
-
     page = requests.get(song_page_url)
     soup = BeautifulSoup(page.text, 'html.parser')
 
-    # Scraping track_name and artists
-    try:
-        song_id = re.search(r'/track/([a-zA-Z0-9]+)', song_page_url).group(1)
-        col12 = soup.find("div", class_="col-12 text-center")
-        col12_div = col12.find_all("div")
-    except:
-        print("Something went wrong with finding the song id")
+    # Scraping track_name, artists, and track genre
+    col12 = soup.find("div", class_="col-12 text-center")
+    col12_div = col12.find_all("div")
 
     try:
+        song_id = re.search(r'/track/([a-zA-Z0-9]+)', song_page_url).group(1)
         track_name, artists = col12_div[0].text, col12_div[1].text
+        artists = artists.split(", ")
+        track_genre = get_song_genre(track_name, artists[0])
+
     except:
-        print("Something went wrong with finding the track name or artist names")
-    artists = set(artists.split(", "))
+        print("Something went wrong with finding the song_id, track name, artist names, or track_genre")
 
     # Scraping tempo and mode
     try:
@@ -91,7 +115,6 @@ def get_song_properties(song_page_url: str) -> dict:
         return {"song_id": song_id, "track_name": track_name, "artists": artists, "danceability": danceability,
                 "energy": energy, "key": key, "loudness": loudness, "mode": mode, "speechiness": speechiness,
                 "acousticness": acousticness, "instrumentalness": instrumentalness, "liveness": liveness,
-                "valence": valence,
-                "tempo": tempo}
+                "valence": valence, "tempo": tempo, "track_genre": track_genre}
     except:
         return {}
