@@ -294,7 +294,7 @@ def get_web():
         gets web
     """
     # TODO modify as needed
-    song_name = web_list.get(web_list.curselection()) # this returns the song which u clicked on
+    song_name = web_list.get(web_list.curselection())  # this returns the song which u clicked on
     song_link = song_finder.get_song_links(song_name)[0]
     properties = song_finder.get_song_properties(song_link)
     properties_to_list = [properties[feature] for feature in properties]
@@ -657,6 +657,7 @@ tree.column("Score", width=100, anchor="e")
 tree.pack(expand=True, fill="both")
 tree.tag_configure('even', background='#191c1a')
 tree.tag_configure('odd', background='#2d302d')
+tree.tag_configure('header', background="#000000")
 
 
 def get_input() -> list:
@@ -725,15 +726,15 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
 
     # Now, we need to update the treeview.
     # best_score = first score, which is the best recommendation
-    best_score = float(song_list[00][2])
 
-    def star(value: float) -> str:
+    def star(value: float, current_list: list) -> str:
         """
             converts the score to a star based rating
             within 50% greater than the best score: 3 stars
             between 50 to 75%: 2 stars
             more than 75%: 1 star
         """
+        best_score = current_list[0][2]
         threshold_excellent = best_score * 1.5
         threshold_good = best_score * 1.75
 
@@ -745,10 +746,12 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
             return "⭐"
 
     i = 1
-    for item in song_list:
-        tag = 'even' if i % 2 == 0 else 'odd'
-        tree.insert("", "end", values=(item[0], item[1], star(float(item[2]))), tags=(tag,))
-        i += 1
+    for lst in song_list:
+        tree.insert("", "end", values=("", "", ""), tags='header')
+        for item in lst:
+            tag = 'even' if i % 2 == 0 else 'odd'
+            tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), lst)), tags=(tag,))
+            i += 1
 
 
 # Recommend button for Database search
