@@ -278,12 +278,13 @@ web_list.pack(side="left", fill="both", expand=True)
 
 web_links = {}
 
+
 def search_web():
     """
         Gets the name of the song and webscrapes
     """
     global web_links
-    web_list.delete(0,web_list.size())
+    web_list.delete(0, web_list.size())
     song_name = entry_web.get()
     if song_name != placeholder_text:
         entry_web.delete(0, tk.END)
@@ -307,7 +308,7 @@ def get_web():
     """
         gets web
     """
-    song_name = web_list.get(web_list.curselection()) # this returns the song which u clicked on
+    song_name = web_list.get(web_list.curselection())  # this returns the song which u clicked on
     song_link = web_links[song_name]
     properties = song_finder.get_song_properties(song_link)
     properties_to_list = [properties[feature] for feature in properties]
@@ -670,7 +671,7 @@ tree.column("Score", width=100, anchor="e")
 tree.pack(expand=True, fill="both")
 tree.tag_configure('even', background='#191c1a')
 tree.tag_configure('odd', background='#2d302d')
-tree.tag_configure('header', background="#000000")
+tree.tag_configure('header', background="#1DB954", foreground="#ffffff")
 
 
 def get_input() -> list:
@@ -768,7 +769,7 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
     else:
         n = len(song_list)
         common = song_list[0]
-        tree.insert("", "end", values=(f'Number of songs in common: {n}', "", ""), tags='header')
+        tree.insert("", "end", values=(f'NUMBER OF SONGS IN COMMON: {n}', "", ""), tags='header')
         for item in common:
             tag = 'even' if i % 2 == 0 else 'odd'
             tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), common)), tags=(tag,))
@@ -777,7 +778,7 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
         for lst in song_list[1:]:
             # TODO modify val to represent common song stufyf brain too fried to do ts
             val = n
-            tree.insert("", "end", values=(f'Number of songs in common: {val}', "", ""), tags='header')
+            tree.insert("", "end", values=(f'NUMBER OF SONGS IN COMMON: {val}', "", ""), tags='header')
             for item in lst:
                 tag = 'even' if i % 2 == 0 else 'odd'
                 tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), lst)), tags=(tag,))
