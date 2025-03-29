@@ -94,6 +94,8 @@ class RecommendationSystem:
                 if num_songs + len(cur_list) > n:
                     ordered_list[i] = ordered_list[i][:n - num_songs]
                     num_songs += len(ordered_list[i])
+                    break
+                num_songs += len(ordered_list[i])
                 i += 1
         return ordered_list
 
