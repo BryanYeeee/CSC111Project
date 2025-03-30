@@ -14,8 +14,8 @@ DATASET_NAME_1 = "datasets/kaggle_spotify_songs_1.csv"
 DATASET_NAME_2 = "datasets/kaggle_spotify_songs_2.csv"
 FILE_LENGTH_1 = 113999
 FILE_LENGTH_2 = 32833
-SONG_LIMIT_1 = 400
-SONG_LIMIT_2 = 1
+SONG_LIMIT_1 = 6000
+SONG_LIMIT_2 = 4000
 INTERVAL = 1
 
 BASE_GENRES = {"pop", "rock", "techno", "metal", "house", "reggae", "songwriter", "rap"}
