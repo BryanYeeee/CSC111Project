@@ -2,6 +2,8 @@
 This module processes csv dataset files to generate the necessary objects to be used by the recommendation system
 """
 import csv
+from typing import Any
+
 from SongGraph import SongGraph
 from SongDecisionTree import SongDecisionTree, organize_levels, round_values
 
@@ -67,7 +69,7 @@ def add_to_objects(vertex_id: str, name: str, artists: set[str],
     return genre
 
 
-def generate_song_graph() -> tuple[SongGraph, dict[str, str], SongDecisionTree]:
+def generate_song_graph() -> tuple[SongGraph, dict[Any, Any], SongDecisionTree, set[str]]:
     """
     Generates a SongGraph, dictionary mapping song and artists to track id, and SongDecisionTree
     by reading two CSV datasets containing Spotify song data.
@@ -82,7 +84,6 @@ def generate_song_graph() -> tuple[SongGraph, dict[str, str], SongDecisionTree]:
     total = 0
     genres = set()
 
-    print("start")
     with open(DATASET_NAME_1, 'r', encoding="utf-8") as file:
         reader = csv.reader(file)
         next(reader)
@@ -92,11 +93,8 @@ def generate_song_graph() -> tuple[SongGraph, dict[str, str], SongDecisionTree]:
             genres.add(add_to_objects(row[1], row[4], row[2], row[8], row[9], row[10], row[11], row[12], row[13],
                                       row[14], row[15], row[16], row[17], row[18],
                                       row[20], songs_added, new_graph, song_list_names, new_tree, limit))
-            if limit % 1000 == 0:
-                print(limit)
             limit += FILE_LENGTH_1 // SONG_LIMIT_1
             total += 1
-    print("first file done")
 
     limit = 0
 
@@ -111,20 +109,16 @@ def generate_song_graph() -> tuple[SongGraph, dict[str, str], SongDecisionTree]:
                 row[14], row[15], row[16], row[17], row[18], row[19],
                 row[20], row[21], row[9], songs_added, new_graph, song_list_names, new_tree, limit
             ))
-            if limit % 1000 == 0:
-                print(limit)
             limit += FILE_LENGTH_2 // SONG_LIMIT_2
             total += 1
-    print(total)
 
     return new_graph, song_list_names, new_tree, genres
 
 
 if __name__ == '__main__':
-    # TODO: Comment out, used for testing
-    g, songs = generate_song_graph()
-    print(g.get_vertex_details("7ujx3NYtwO2LkmKGz59mXp"))
-    print(g.get_vertex_details("4OSEE9iEHADmTSCpxl87GJ"))
-    # visualize_graph(g)
-
-    print(songs)
+    import python_ta
+    python_ta.check_all(config={
+        'extra-imports': ['csv', 'SongGraph', 'SongDecisionTree', 'typing'],
+        'allowed-io': ['generate_song_graph'],
+        'max-line-length': 120,
+    })
