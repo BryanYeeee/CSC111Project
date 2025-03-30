@@ -12,13 +12,6 @@ from song_decision_tree import organize_levels
 
 if __name__ == "__main__":
 
-    import python_ta
-    python_ta.check_all(config={
-        'extra-imports': ['random', 'tkinter', 'recommendation_system', 'song_decision_tree', 'song_finder'],
-        'allowed-imports': [],
-        'max-line-length': 120,
-    })
-
     recommendation_system = RecommendationSystem()
     song_list_names = list(recommendation_system.song_list_names.keys())
 
@@ -303,8 +296,8 @@ if __name__ == "__main__":
 
     def search_web():
         """
-            Gets the name of the song the user inputs, and then webscrapes and lists the "song name | artist" for the top
-            five urls found based on the song input.
+            Gets the name of the song the user inputs, and then webscrapes and lists the "song name | artist" for the
+            top five urls found based on the song input.
         """
         global link_select
         link_select = True
@@ -331,7 +324,7 @@ if __name__ == "__main__":
 
 
     search_web_button = ttk.Button(web_widgets, text="Search Web", style="Accent.TButton",
-                                command=search_web)
+                                   command=search_web)
     search_web_button.grid(row=1, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
 
 
@@ -347,7 +340,7 @@ if __name__ == "__main__":
 
 
     accent_button_web = ttk.Button(web_widgets, text="Recommend New Songs!", style="Accent.TButton",
-                                command=get_web)
+                                   command=get_web)
     accent_button_web.grid(row=5, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
 
     # Tab 3 - Decision Tree
@@ -674,7 +667,7 @@ if __name__ == "__main__":
 
 
     accent_button_slider = ttk.Button(dt_widget, text="Recommend New Songs!", style="Accent.TButton",
-                                    command=get_slider)
+                                      command=get_slider)
     accent_button_slider.grid(row=12, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
 
     # Output table
@@ -795,7 +788,7 @@ if __name__ == "__main__":
 
     # Recommend button for Database search
     accent_button = ttk.Button(widgets_frame, text="Recommend New Songs!", style="Accent.TButton",
-                            command=suggest_song)
+                               command=suggest_song)
     accent_button.grid(row=6, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
 
     # Center the window, and set minsize
