@@ -277,12 +277,28 @@ web_list.pack(side="left", fill="both", expand=True)
 
 web_links = {}
 
+link_select = True
+error_msg = "No songs found with the given name!"
+
+
+def disable_selection(_):
+    """
+        Prevents you from selecting the error message when no songs are found
+    """
+    if not link_select:
+        web_list.selection_clear(0, tk.END)
+
+
+web_list.bind("<<ListboxSelect>>", disable_selection)
+
 
 def search_web():
     """
         Gets the name of the song the user inputs, and then webscrapes and lists the "song name | artist" for the top
         five urls found based on the song input.
     """
+    global link_select
+    link_select = True
     global web_links
     web_list.delete(0, web_list.size())
     song_name = entry_web.get()
@@ -293,7 +309,8 @@ def search_web():
     song_links = song_finder.get_song_links(song_name)
 
     if not song_links:
-        web_list.insert("end", "No songs found with the given name!  ")
+        web_list.insert("end", error_msg)
+        link_select = False
 
     for link in song_links:
         element = song_finder.get_title_artist(link)
@@ -604,15 +621,7 @@ slider_tempo.config(command=update_tempo_label)
 genre_label = ttk.Label(dt_widget, text="Genre")
 genre_label.grid(row=10, column=1, padx=5, pady=5, sticky="w")
 
-genres = ['-', 'Acoustic', 'Afrobeat', 'Alternative', 'Ambient', 'Anime', 'Bluegrass', 'Blues', 'Brazil', 'Breakbeat',
-          'British', 'Children', 'Chill', 'Classical', 'Club', 'Comedy', 'Country', 'Dance', 'Dancehall', 'Disco',
-          'Disney', 'Drum-and-bass', 'Dub', 'Dubstep', 'Edm', 'Electro', 'Electronic', 'Emo', 'Folk', 'Forro',
-          'French', 'Funk', 'Garage', 'German', 'Gospel', 'Goth', 'Grindcore', 'Groove', 'Grunge', 'Guitar', 'Happy',
-          'Hardcore', 'Hardstyle', 'Hip-hop', 'Honky-tonk', 'House', 'Idm', 'Indian', 'Indie', 'Industrial', 'Iranian',
-          'J-dance', 'J-idol', 'Jazz', 'Kids', 'Latin', 'Latino', 'Malay', 'Metal', 'Mpb', 'New-age', 'Opera',
-          'Pagode', 'Party', 'Piano', 'Pop', 'Punk', 'R-n-b', 'Reggae', 'Rock', 'Romance', 'Sad', 'Salsa', 'Samba',
-          'Sertanejo', 'Show-tunes', 'Ska', 'Sleep', 'Songwriter', 'Soul', 'Spanish', 'Study', 'Swedish', 'Tango',
-          'Techno', 'Trance', 'Trip-hop', 'Turkish', 'World-music']
+genres = ["-"] + list(recommendation_system.genres)
 
 genre_name = ttk.Combobox(dt_widget, values=genres, state="readonly", width=30)
 genre_name.grid(row=11, column=1, padx=5, pady=5, sticky="w")
@@ -767,9 +776,11 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
         lst = song_list[i]
         if n > 1 and lst != []:
             tree.insert("", "end", values=(f'NUMBER OF SONGS IN COMMON: {n - i}', "", ""), tags='header')
+        m = 0
         for item in lst:
-            tag = 'even' if i % 2 == 0 else 'odd'
+            tag = 'even' if m % 2 == 0 else 'odd'
             tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), lst)), tags=(tag,))
+            m += 1
 
 
 # Recommend button for Database search
