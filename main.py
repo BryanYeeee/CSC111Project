@@ -11,7 +11,7 @@ from recommendation_system import RecommendationSystem
 from song_decision_tree import organize_levels
 
 if __name__ == "__main__":
-    
+
     import python_ta
     python_ta.check_all(config={
         'extra-imports': ['random', 'tkinter', 'recommendation_system', 'song_decision_tree', 'song_finder'],
@@ -310,6 +310,7 @@ if __name__ == "__main__":
         link_select = True
         global web_links
         web_list.delete(0, web_list.size())
+        web_links.clear()
         song_name = entry_web.get()
         if song_name != placeholder_text:
             entry_web.delete(0, tk.END)
