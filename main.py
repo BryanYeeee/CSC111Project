@@ -281,7 +281,8 @@ web_links = {}
 
 def search_web():
     """
-        Gets the name of the song and webscrapes
+        Gets the name of the song the user inputs, and then webscrapes and lists the "song name | artist" for the top
+        five urls found based on the song input.
     """
     global web_links
     web_list.delete(0, web_list.size())
@@ -291,6 +292,11 @@ def search_web():
         entry_web.insert(0, placeholder_text)
         entry_web.configure(foreground="grey")
     song_links = song_finder.get_song_links(song_name)
+
+    if not song_links:
+        ...
+            #todo: something that says nothing was found
+
     for link in song_links:
         element = song_finder.get_title_artist(link)
         item = element[0] + " | " + element[1]
@@ -306,14 +312,13 @@ search_web_button.grid(row=1, column=0, columnspan=2, padx=5, pady=10, sticky="n
 
 def get_web():
     """
-        gets web
+        Gets the selected song's properties and uses it to suggest and show songs
     """
     song_name = web_list.get(web_list.curselection())  # this returns the song which u clicked on
     song_link = web_links[song_name]
     properties = song_finder.get_song_properties(song_link)
     properties_to_list = [properties[feature] for feature in properties]
     suggest_and_show_songs(organize_levels(*properties_to_list[3:]), 10)
-    return
 
 
 accent_button_web = ttk.Button(web_widgets, text="Recommend New Songs!", style="Accent.TButton",

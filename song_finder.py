@@ -29,7 +29,6 @@ def get_song_links(song_input: str) -> list:
     soup = BeautifulSoup(page.text, 'html.parser')
     links = soup.find_all("td", class_="table_img", limit=5)
 
-    # Links to first 5 songs found on the page
     return [PARENT_URL + quote(td.find("a")["href"]) for td in links]
 
 
@@ -40,22 +39,20 @@ def get_song_genre(song_name: str, artist: str) -> str:
     """
     clean_name = re.sub(r"\s*(feat\.?|ft\.?).*", "", song_name, flags=re.IGNORECASE).strip()
     api_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={quote(clean_name + " " + artist)}%20song&format=json"
-    print(api_url)
     data = requests.get(api_url).json()
 
     if data["query"]["search"]:
         page_title = quote(data["query"]["search"][0]["title"])
         page_url = f"https://en.wikipedia.org/wiki/{page_title}"
-        print("Wikipedia Page:", page_url)
         song_data_page = requests.get(page_url)
         genre_soup = BeautifulSoup(song_data_page.text, "html.parser")
         try:
             genre_row = genre_soup.find("th", string="Genre")
             genre = genre_row.find_next_sibling("td").text
             genre = genre.strip().split("\n")[0].lower()
-        except:
+            return GenerateGraph.filter_genre(genre)
+        except AttributeError:
             return ''
-        return GenerateGraph.filter_genre(genre)
 
 
 def get_title_artist(song_page_url: str) -> tuple[str, str]:
@@ -67,7 +64,7 @@ def get_title_artist(song_page_url: str) -> tuple[str, str]:
     page = requests.get(song_page_url)
     soup = BeautifulSoup(page.text, 'html.parser')
 
-    # Scraping track_name, artists, and track genre
+    # Scraping track_name and artists
     col12 = soup.find("div", class_="col-12 text-center")
     col12_div = col12.find_all("div")
 
@@ -86,8 +83,11 @@ def get_song_properties(song_page_url: str) -> dict:
     soup = BeautifulSoup(page.text, 'html.parser')
 
     # Scraping track_name, artists, and track genre
-    col12 = soup.find("div", class_="col-12 text-center")
-    col12_div = col12.find_all("div")
+    try:
+        col12 = soup.find("div", class_="col-12 text-center")
+        col12_div = col12.find_all("div")
+    except AttributeError:
+        return {}
 
     try:
         song_id = re.search(r'/track/([a-zA-Z0-9]+)', song_page_url).group(1)
@@ -95,8 +95,8 @@ def get_song_properties(song_page_url: str) -> dict:
         artists = artists.split(", ")
         track_genre = get_song_genre(track_name, artists[0])
 
-    except:
-        print("Something went wrong with finding the song_id, track name, artist names, or track_genre")
+    except AttributeError:
+        return {}
 
     # Scraping tempo and mode
     try:
@@ -104,8 +104,8 @@ def get_song_properties(song_page_url: str) -> dict:
         mode = 1 if "major" in col12_div[5].text.lower() else 0
         camelot = re.search(r"Camelot(.+)", col12_div[6].text.replace('\n', '')).group(1)
         key = CAMELOT_TO_KEY[camelot]
-    except:
-        print("Something went wrong with finding the tempo, mode, or key")
+    except AttributeError:
+        return {}
 
     # Scraping danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, and valence
     grid = soup.find_all("div", class_="col-6-lg-12")
@@ -124,14 +124,10 @@ def get_song_properties(song_page_url: str) -> dict:
         instrumentalness = int(re.search(r"Instrumentalness (\d+)", div_text).group(1)) / 100
         liveness = int(re.search(r"Liveness (\d+)", div_text).group(1)) / 100
         valence = int(re.search(r"Valence (\d+)", div_text).group(1)) / 100
-    except:
-        print("Something went wrong with finding the danceability, "
-              "energy, loudness, speechiness, acousticness, instrumentalness, liveness, or valence")
-
-    try:
-        return {"song_id": song_id, "track_name": track_name, "artists": artists, "danceability": danceability,
-                "energy": energy, "key": key, "loudness": float(loudness), "mode": mode, "speechiness": speechiness,
-                "acousticness": acousticness, "instrumentalness": instrumentalness, "liveness": liveness,
-                "valence": valence, "tempo": int(tempo), "track_genre": track_genre}
-    except:
+    except AttributeError:
         return {}
+
+    return {"song_id": song_id, "track_name": track_name, "artists": artists, "danceability": danceability,
+            "energy": energy, "key": key, "loudness": float(loudness), "mode": mode, "speechiness": speechiness,
+            "acousticness": acousticness, "instrumentalness": instrumentalness, "liveness": liveness,
+            "valence": valence, "tempo": int(tempo), "track_genre": track_genre}
