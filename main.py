@@ -739,7 +739,7 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
     song_list = recommendation_system.generate_recommendations(given_input, recommended_count)
     print(song_list)
     # case: no recommendations
-    if not song_list:
+    if all({lst == [] for lst in song_list}):
         tree.insert("", "end", values=("No similar songs found :(", "", ""))
         return
 
@@ -764,30 +764,14 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
         else:
             return "⭐"
 
-    i = 1
-    if len(song_list) < 2:
-        lst = song_list[0]
+    n = len(song_list)
+    for i in range(n):
+        lst = song_list[i]
+        if n > 1 and lst != []:
+            tree.insert("", "end", values=(f'NUMBER OF SONGS IN COMMON: {n - i}', "", ""), tags='header')
         for item in lst:
             tag = 'even' if i % 2 == 0 else 'odd'
             tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), lst)), tags=(tag,))
-            i += 1
-    else:
-        n = len(song_list)
-        common = song_list[0]
-        tree.insert("", "end", values=(f'NUMBER OF SONGS IN COMMON: {n}', "", ""), tags='header')
-        for item in common:
-            tag = 'even' if i % 2 == 0 else 'odd'
-            tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), common)), tags=(tag,))
-            i += 1
-        i = 0
-        for lst in song_list[1:]:
-            # TODO modify val to represent common song stufyf brain too fried to do ts
-            val = n
-            tree.insert("", "end", values=(f'NUMBER OF SONGS IN COMMON: {val}', "", ""), tags='header')
-            for item in lst:
-                tag = 'even' if i % 2 == 0 else 'odd'
-                tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), lst)), tags=(tag,))
-                i += 1
 
 
 # Recommend button for Database search

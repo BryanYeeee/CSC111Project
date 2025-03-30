@@ -84,21 +84,21 @@ class RecommendationSystem:
             ordered_list[songs_to_check - num_intersections].append((song_artist[0], song_artist[1], new_score))
         i = 0
         num_songs = 0
+        prev_list = None
         while i < len(ordered_list) and num_songs < n:
-            if not ordered_list[i]:
-                ordered_list.pop(i)
-            else:
+            if ordered_list[i] != []:
                 cur_list = ordered_list[i]
                 cur_list.sort(key=lambda x: x[-1])
-                if i > 0:
-                    ratio = ordered_list[i - 1][-1][-1] / cur_list[0][-1]
+                if prev_list:
+                    ratio = prev_list[-1][-1] / cur_list[0][-1]
                     ordered_list[i] = [(*cur_list[j][:-1], cur_list[j][-1] * ratio) for j in range(len(cur_list))]
                 if num_songs + len(cur_list) > n:
                     ordered_list[i] = ordered_list[i][:n - num_songs]
                     num_songs += len(ordered_list[i])
                     break
                 num_songs += len(ordered_list[i])
-                i += 1
+                prev_list = ordered_list[i]
+            i += 1
         return ordered_list
 
 
