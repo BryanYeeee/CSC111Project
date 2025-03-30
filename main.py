@@ -335,8 +335,8 @@ if __name__ == "__main__":
         song_name = web_list.get(web_list.curselection())  # this returns the song which u clicked on
         song_link = web_links[song_name]
         properties = song_finder.get_song_properties(song_link)
-        properties_to_list = [properties[feature] for feature in properties]
-        suggest_and_show_songs(organize_levels(*properties_to_list[3:]), 10)
+        properties['genre'] = properties['track_genre']
+        suggest_and_show_songs(organize_levels(properties), 10)
 
 
     accent_button_web = ttk.Button(web_widgets, text="Recommend New Songs!", style="Accent.TButton",
@@ -624,7 +624,7 @@ if __name__ == "__main__":
     genre_label = ttk.Label(dt_widget, text="Genre")
     genre_label.grid(row=10, column=1, padx=5, pady=5, sticky="w")
 
-    genres = ["-"] + list(recommendation_system.genres)
+    genres = ["-"] + sorted(list(recommendation_system.genres))
 
     genre_name = ttk.Combobox(dt_widget, values=genres, state="readonly", width=30)
     genre_name.grid(row=11, column=1, padx=5, pady=5, sticky="w")
@@ -663,7 +663,21 @@ if __name__ == "__main__":
             final_value.append(attribute)
 
         # change this to whatever the decision tree needs
-        suggest_and_show_songs(organize_levels(*final_value, genre_name.get().lower()), 10)
+        suggest_and_show_songs(organize_levels(
+            {
+                "danceability": final_value[0],
+                "energy": final_value[1],
+                "key": final_value[2],
+                "loudness": final_value[3],
+                "mode": final_value[4],
+                "speechiness": final_value[5],
+                "acousticness": final_value[6],
+                "instrumentalness": final_value[7],
+                "liveness": final_value[8],
+                "valence": final_value[9],
+                "tempo": final_value[10],
+                "genre": genre_name.get().lower()
+            }), 10)
 
 
     accent_button_slider = ttk.Button(dt_widget, text="Recommend New Songs!", style="Accent.TButton",

@@ -7,9 +7,6 @@ from typing import Any
 from song_graph import SongGraph
 from song_decision_tree import SongDecisionTree, organize_levels, round_values
 
-DEFAULT_ORDER = ["danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness",
-                 "instrumentalness", "liveness", "valence", "tempo", "genre"]
-
 DATASET_NAME_1 = "datasets/kaggle_spotify_songs_1.csv"
 DATASET_NAME_2 = "datasets/kaggle_spotify_songs_2.csv"
 FILE_LENGTH_1 = 113999
@@ -62,11 +59,20 @@ def add_to_objects(vertex_id: str, name: str, artists: set[str],
         song_list_names[song_name] = vertex_id
 
         if limit % INTERVAL == 0:
-            values = [danceability, energy, key, loudness, mode, speechiness, acousticness,
-                      instrumentalness, liveness, valence, tempo]
-            values = list(map(float, values))
-
-            new_tree.insert_song(round_values(organize_levels(*values, genre)) + [vertex_id])
+            new_tree.insert_song(round_values(organize_levels({
+                "danceability": float(danceability),
+                "energy": float(energy),
+                "key": int(key),
+                "loudness": float(loudness),
+                "valence": float(valence),
+                "mode": int(mode),
+                "speechiness": float(speechiness),
+                "acousticness": float(acousticness),
+                "instrumentalness": float(instrumentalness),
+                "liveness": float(liveness),
+                "tempo": float(tempo),
+                "genre": genre,
+                })) + [vertex_id])
     return genre.capitalize()
 
 
