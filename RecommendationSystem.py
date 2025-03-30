@@ -1,5 +1,5 @@
 """
-This module contains the RecommendationSystem class, which generates song recommendations 
+This module contains the RecommendationSystem class, which generates song recommendations
 based on inputs given by the user
 """
 import random
@@ -9,6 +9,8 @@ from SongGraph import SongGraph
 from SongDecisionTree import SongDecisionTree
 
 DEFAULT_RECOMMENDATION_COUNT = 10
+
+
 class RecommendationSystem:
     """
     Song recommendation system class to generate recommendations.
@@ -44,21 +46,21 @@ class RecommendationSystem:
             print(options)
             return options[random.randint(0, len(options) - 1)]
 
-
-    def generate_recommendations(self, given_input: Optional[list[str] | list], n: int = DEFAULT_RECOMMENDATION_COUNT) -> list[list[tuple[str, str, float]]]:
+    def generate_recommendations(self, given_input: Optional[list[str] | list],
+                                 n: int = DEFAULT_RECOMMENDATION_COUNT) -> list[list[tuple[str, str, float]]]:
         """
         TODO
         If given a list of strings, return a nested list where:
         - each sublist contains a list of tuples
         - each tuple contains the song name, artist name, and score
-        - the song name 
+        - the song name
         - the sublists are sorted by the number of similar songs  in descending order
         Given a song name and artist, return a list of n tuples where the tuple is formatted like
         (song_name, artist_name, score).
         """
         if not given_input:
             return []
-        if not all({isinstance(i, str) for i in given_input}): # taking in a list of features
+        if not all({isinstance(i, str) for i in given_input}):  # taking in a list of features
             vertex_ids = {self.obtain_vertex_id(given_input)}
             songs_to_check = 1
         else:
@@ -83,7 +85,7 @@ class RecommendationSystem:
         i = 0
         num_songs = 0
         while i < len(ordered_list) and num_songs < n:
-            if ordered_list[i] == []:
+            if not ordered_list[i]:
                 ordered_list.pop(i)
             else:
                 cur_list = ordered_list[i]
@@ -96,6 +98,7 @@ class RecommendationSystem:
                     num_songs += len(ordered_list[i])
                 i += 1
         return ordered_list
+
 
 # TODO REMOVE
 if __name__ == '__main__':
@@ -112,7 +115,7 @@ if __name__ == '__main__':
 
     # for rec in recs:
     #     print(rec)
-    
+
     # # inputs = [0.665,0.185,1,-13.852,1,0.0381,0.913,0.0,0.334,0.458,82.474,'acoustic'] # 1RZkqIEM5aV000fKgz9J46
     # # inputs = [0.676,0.461,1,-6.746,0,0.143,0.0322,1.01e-06,0.358,0.715,87.917,'acoustic'] # 5SuOikwiRyPMVoIQDJUgSV
     # inputs = [0.534,0.26,1,-12.406,1,0.0319,0.834,0.00405,0.102,0.151,113.877,'acoustic'] # 4ujYTGqbiV5xl97Pqoctq2

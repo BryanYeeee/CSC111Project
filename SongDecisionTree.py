@@ -133,7 +133,7 @@ def round_values(inputs: list) -> list:
                     if abs(opt - float(inputs[i])) < abs(opt - float(inputs[i])):
                         closest_val = opt
             elif inputs[i] in NODES_PER_LEVEL[i]:
-                    closest_val = inputs[i]
+                closest_val = inputs[i]
             res.append(closest_val)
         else:
             res.append(inputs[i])
