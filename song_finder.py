@@ -131,3 +131,11 @@ def get_song_properties(song_page_url: str) -> dict:
             "energy": energy, "key": key, "loudness": float(loudness), "mode": mode, "speechiness": speechiness,
             "acousticness": acousticness, "instrumentalness": instrumentalness, "liveness": liveness,
             "valence": valence, "tempo": int(tempo), "track_genre": track_genre}
+
+
+if __name__ == '__main__':
+    import python_ta
+    python_ta.check_all(config={
+        'extra-imports': ['requests', 'bs4'],
+        'max-line-length': 120,
+    })
