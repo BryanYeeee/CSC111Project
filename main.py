@@ -621,15 +621,7 @@ slider_tempo.config(command=update_tempo_label)
 genre_label = ttk.Label(dt_widget, text="Genre")
 genre_label.grid(row=10, column=1, padx=5, pady=5, sticky="w")
 
-genres = ['-', 'Acoustic', 'Afrobeat', 'Alternative', 'Ambient', 'Anime', 'Bluegrass', 'Blues', 'Brazil', 'Breakbeat',
-          'British', 'Children', 'Chill', 'Classical', 'Club', 'Comedy', 'Country', 'Dance', 'Dancehall', 'Disco',
-          'Disney', 'Drum-and-bass', 'Dub', 'Dubstep', 'Edm', 'Electro', 'Electronic', 'Emo', 'Folk', 'Forro',
-          'French', 'Funk', 'Garage', 'German', 'Gospel', 'Goth', 'Grindcore', 'Groove', 'Grunge', 'Guitar', 'Happy',
-          'Hardcore', 'Hardstyle', 'Hip-hop', 'Honky-tonk', 'House', 'Idm', 'Indian', 'Indie', 'Industrial', 'Iranian',
-          'J-dance', 'J-idol', 'Jazz', 'Kids', 'Latin', 'Latino', 'Malay', 'Metal', 'Mpb', 'New-age', 'Opera',
-          'Pagode', 'Party', 'Piano', 'Pop', 'Punk', 'R-n-b', 'Reggae', 'Rock', 'Romance', 'Sad', 'Salsa', 'Samba',
-          'Sertanejo', 'Show-tunes', 'Ska', 'Sleep', 'Songwriter', 'Soul', 'Spanish', 'Study', 'Swedish', 'Tango',
-          'Techno', 'Trance', 'Trip-hop', 'Turkish', 'World-music']
+genres = ["-"] + list(recommendation_system.genres)
 
 genre_name = ttk.Combobox(dt_widget, values=genres, state="readonly", width=30)
 genre_name.grid(row=11, column=1, padx=5, pady=5, sticky="w")

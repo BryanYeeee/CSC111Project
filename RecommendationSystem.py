@@ -4,7 +4,7 @@ based on inputs given by the user
 """
 import random
 from typing import Optional
-from GenerateGraph import generate_song_graph, SEARCH_BAR_SPLITTER
+from GenerateGraph import generate_song_graph
 from SongGraph import SongGraph
 from SongDecisionTree import SongDecisionTree
 
@@ -49,14 +49,19 @@ class RecommendationSystem:
     def generate_recommendations(self, given_input: Optional[list[str] | list],
                                  n: int = DEFAULT_RECOMMENDATION_COUNT) -> list[list[tuple[str, str, float]]]:
         """
-        TODO
         If given a list of strings, return a nested list where:
+        - the first sublist contains a list of songs that are similar to every song in the input
+        - ...
+        - the last sublist contains a list of songs that are similar to one of the songs in the input
         - each sublist contains a list of tuples
-        - each tuple contains the song name, artist name, and score
-        - the song name
-        - the sublists are sorted by the number of similar songs  in descending order
-        Given a song name and artist, return a list of n tuples where the tuple is formatted like
-        (song_name, artist_name, score).
+        - each tuple contains the song name, artist name, and relative similarity score
+        
+        The relativity score is calculated by taking the average of the similarity scores between the 
+        song and the songs in the given input. This relativity score is also multiplied by the ratio of the
+        previous non empty sublist's last song's (largest) score to the current sublist's first song's (smallest) score,
+        to ensure that the scores are relative to each other.
+        
+        If given a list of features, return a list of songs that are similar to the song with the given features.
         """
         if not given_input:
             return []
@@ -100,25 +105,3 @@ class RecommendationSystem:
                 prev_list = ordered_list[i]
             i += 1
         return ordered_list
-
-
-# TODO REMOVE
-if __name__ == '__main__':
-    vertex_id = "5SuOikwiRyPMVoIQDJUgSV"
-    song = f'Comedy{SEARCH_BAR_SPLITTER}Gen Hoshino'
-    songs = ['Unstoppable｜The Him', 'Comedy｜Gen Hoshino']
-    sys = RecommendationSystem()
-    recs = sys.generate_recommendations(songs, 10)
-
-    # print(sys.graph.get_vertex_details(vertex_id))
-
-    # for neighbour_id in sys.graph.get_neighbours(vertex_id):
-    #     print(sys.graph.get_neighbours(vertex_id)[neighbour_id])
-
-    # for rec in recs:
-    #     print(rec)
-
-    # # inputs = [0.665,0.185,1,-13.852,1,0.0381,0.913,0.0,0.334,0.458,82.474,'acoustic'] # 1RZkqIEM5aV000fKgz9J46
-    # # inputs = [0.676,0.461,1,-6.746,0,0.143,0.0322,1.01e-06,0.358,0.715,87.917,'acoustic'] # 5SuOikwiRyPMVoIQDJUgSV
-    # inputs = [0.534,0.26,1,-12.406,1,0.0319,0.834,0.00405,0.102,0.151,113.877,'acoustic'] # 4ujYTGqbiV5xl97Pqoctq2
-    # sys.obtain_vertex_id(inputs)

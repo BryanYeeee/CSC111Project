@@ -64,7 +64,7 @@ def add_to_objects(vertex_id: str, name: str, artists: set[str],
             values = list(map(float, values))
 
             new_tree.insert_song(round_values(organize_levels(*values, genre)) + [vertex_id])
-    return genre
+    return genre.capitalize()
 
 
 def generate_song_graph() -> tuple[SongGraph, dict[str, str], SongDecisionTree]:
