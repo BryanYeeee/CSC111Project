@@ -146,7 +146,7 @@ def get_title_artist(song_page_url: str) -> tuple[str, str]:
     col12_div = col12.find_all("div")
 
     track_name, artists = col12_div[0].text, col12_div[1].text
-    return (track_name, artists)
+    return track_name, artists
 
 
 if __name__ == '__main__':
