@@ -277,12 +277,28 @@ web_list.pack(side="left", fill="both", expand=True)
 
 web_links = {}
 
+link_select = True
+error_msg = "No songs found with the given name!"
+
+
+def disable_selection(_):
+    """
+        Prevents you from selecting the error message when no songs are found
+    """
+    if not link_select:
+        web_list.selection_clear(0, tk.END)
+
+
+web_list.bind("<<ListboxSelect>>", disable_selection)
+
 
 def search_web():
     """
         Gets the name of the song the user inputs, and then webscrapes and lists the "song name | artist" for the top
         five urls found based on the song input.
     """
+    global link_select
+    link_select = True
     global web_links
     web_list.delete(0, web_list.size())
     song_name = entry_web.get()
@@ -293,7 +309,8 @@ def search_web():
     song_links = song_finder.get_song_links(song_name)
 
     if not song_links:
-        web_list.insert("end", "No songs found with the given name!  ")
+        web_list.insert("end", error_msg)
+        link_select = False
 
     for link in song_links:
         element = song_finder.get_title_artist(link)
@@ -767,9 +784,11 @@ def suggest_and_show_songs(given_input: Optional[str | list], recommended_count:
         lst = song_list[i]
         if n > 1 and lst != []:
             tree.insert("", "end", values=(f'NUMBER OF SONGS IN COMMON: {n - i}', "", ""), tags='header')
+        m = 0
         for item in lst:
-            tag = 'even' if i % 2 == 0 else 'odd'
+            tag = 'even' if m % 2 == 0 else 'odd'
             tree.insert("", "end", values=(item[0], item[1], star(float(item[2]), lst)), tags=(tag,))
+            m += 1
 
 
 # Recommend button for Database search
