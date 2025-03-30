@@ -4,8 +4,8 @@ This module processes csv dataset files to generate the necessary objects to be 
 import csv
 from typing import Any
 
-from SongGraph import SongGraph
-from SongDecisionTree import SongDecisionTree, organize_levels, round_values
+from song_graph import SongGraph
+from song_decision_tree import SongDecisionTree, organize_levels, round_values
 
 DEFAULT_ORDER = ["danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness",
                  "instrumentalness", "liveness", "valence", "tempo", "genre"]
@@ -119,7 +119,7 @@ def generate_song_graph() -> tuple[SongGraph, dict[Any, Any], SongDecisionTree, 
 if __name__ == '__main__':
     import python_ta
     python_ta.check_all(config={
-        'extra-imports': ['csv', 'SongGraph', 'SongDecisionTree', 'typing'],
+        'extra-imports': ['csv', 'song_graph', 'song_decision_tree'],
         'allowed-io': ['generate_song_graph'],
         'max-line-length': 120,
     })

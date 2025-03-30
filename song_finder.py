@@ -6,7 +6,7 @@ from urllib.parse import quote
 import re
 import requests
 from bs4 import BeautifulSoup
-import GenerateGraph
+import generate_graph
 
 PARENT_URL = "https://songdata.io"
 CAMELOT_TO_KEY = {
@@ -134,7 +134,7 @@ def get_song_genre(song_name: str, artist: str) -> str:
             genre_row = genre_soup.find("th", string="Genre")
             genre = genre_row.find_next_sibling("td").text
             genre = genre.strip().split("\n")[0].lower()
-            return GenerateGraph.filter_genre(genre)
+            return generate_graph.filter_genre(genre)
         except AttributeError:
             return ''
     return ''
@@ -157,13 +157,13 @@ def get_title_artist(song_page_url: str) -> tuple[str, str]:
     col12_div = col12.find_all("div")
 
     track_name, artists = col12_div[0].text, col12_div[1].text
-    return (track_name, artists)
+    return track_name, artists
 
 
 if __name__ == '__main__':
     import python_ta
 
     python_ta.check_all(config={
-        'extra-imports': ['urllib.parse', 'bs4', 'requests', 're', 'GenerateGraph'],
+        'extra-imports': ['requests', 'bs4', 'generate_graph', 're', 'urllib.parse'],
         'max-line-length': 120,
     })
