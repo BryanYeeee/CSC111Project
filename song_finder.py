@@ -44,7 +44,21 @@ def get_song_properties(song_page_url: str) -> dict:
 
     Preconditions:
         - song_page_url: A valid URL from songdata.io that points to a specific song's page.
+    >>> properties = get_song_properties("https://songdata.io/track/1lOe9qE0vR9zwWQAOk6CoO/Ransom-by-Lil-Tecca")
+    >>> properties['song_id']
+    '1lOe9qE0vR9zwWQAOk6CoO'
+    >>> properties['loudness']
+    -6.257
+    >>> properties['tempo']
+    180
+    >>> properties['track_genre']
+    'hip-hop'
     """
+
+    properties = {"song_id": "", "track_name": "", "artists": [], "danceability": 0.0, "energy": 0.0, "key": 0,
+                  "loudness": 0.0, "mode": 0, "speechiness": 0.0, "acousticness": 0.0, "instrumentalness": 0.0,
+                  "liveness": 0.0, "valence": 0.0, "tempo": 0, "track_genre": ""}
+
     page = requests.get(song_page_url)
     soup = BeautifulSoup(page.text, 'html.parser')
 
@@ -56,20 +70,20 @@ def get_song_properties(song_page_url: str) -> dict:
         return {}
 
     try:
-        song_id = re.search(r'/track/([a-zA-Z0-9]+)', song_page_url).group(1)
-        track_name, artists = get_title_artist(song_page_url)
-        artists = artists.split(", ")
-        track_genre = get_song_genre(track_name, artists[0])
+        properties["song_id"] = re.search(r'/track/([a-zA-Z0-9]+)', song_page_url).group(1)
+        properties["track_name"], artists = get_title_artist(song_page_url)
+        properties["artists"] = artists.split(", ")
+        properties["track_genre"] = get_song_genre(properties["track_name"], properties["artists"][0])
 
     except AttributeError:
         return {}
 
     # Scraping tempo and mode
     try:
-        tempo = re.search(r"BPM(\d+)", col12_div[4].text.replace('\n', '')).group(1)
-        mode = 1 if "major" in col12_div[5].text.lower() else 0
+        properties["tempo"] = int(re.search(r"BPM(\d+)", col12_div[4].text.replace('\n', '')).group(1))
+        properties["mode"] = 1 if "major" in col12_div[5].text.lower() else 0
         camelot = re.search(r"Camelot(.+)", col12_div[6].text.replace('\n', '')).group(1)
-        key = CAMELOT_TO_KEY[camelot]
+        properties["key"] = CAMELOT_TO_KEY[camelot]
     except AttributeError:
         return {}
 
@@ -82,21 +96,18 @@ def get_song_properties(song_page_url: str) -> dict:
     div_text = div_text.replace("\n", ' ')
 
     try:
-        danceability = int(re.search(r"Danceability (\d+)", div_text).group(1)) / 100
-        energy = int(re.search(r"Energy (\d+)", div_text).group(1)) / 100
-        loudness = re.search(r"Loudness ([-.\d]+)", div_text).group(1)
-        speechiness = int(re.search(r"Speechiness (\d+)", div_text).group(1)) / 100
-        acousticness = int(re.search(r"Acousticness (\d+)", div_text).group(1)) / 100
-        instrumentalness = int(re.search(r"Instrumentalness (\d+)", div_text).group(1)) / 100
-        liveness = int(re.search(r"Liveness (\d+)", div_text).group(1)) / 100
-        valence = int(re.search(r"Valence (\d+)", div_text).group(1)) / 100
+        properties["danceability"] = int(re.search(r"Danceability (\d+)", div_text).group(1)) / 100
+        properties["energy"] = int(re.search(r"Energy (\d+)", div_text).group(1)) / 100
+        properties["loudness"] = float(re.search(r"Loudness ([-.\d]+)", div_text).group(1))
+        properties["speechiness"] = int(re.search(r"Speechiness (\d+)", div_text).group(1)) / 100
+        properties["acousticness"] = int(re.search(r"Acousticness (\d+)", div_text).group(1)) / 100
+        properties["instrumentalness"] = int(re.search(r"Instrumentalness (\d+)", div_text).group(1)) / 100
+        properties["liveness"] = int(re.search(r"Liveness (\d+)", div_text).group(1)) / 100
+        properties["valence"] = int(re.search(r"Valence (\d+)", div_text).group(1)) / 100
     except AttributeError:
         return {}
 
-    return {"song_id": song_id, "track_name": track_name, "artists": artists, "danceability": danceability,
-            "energy": energy, "key": key, "loudness": float(loudness), "mode": mode, "speechiness": speechiness,
-            "acousticness": acousticness, "instrumentalness": instrumentalness, "liveness": liveness,
-            "valence": valence, "tempo": int(tempo), "track_genre": track_genre}
+    return properties
 
 
 def get_song_genre(song_name: str, artist: str) -> str:
@@ -153,6 +164,6 @@ if __name__ == '__main__':
     import python_ta
 
     python_ta.check_all(config={
-        'extra-imports': ['requests', 'bs4'],
+        'extra-imports': ['urllib.parse', 'bs4', 'requests', 're', 'GenerateGraph'],
         'max-line-length': 120,
     })

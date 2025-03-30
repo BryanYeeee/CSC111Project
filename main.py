@@ -300,6 +300,7 @@ def search_web():
     global link_select
     link_select = True
     global web_links
+    web_links.clear()
     web_list.delete(0, web_list.size())
     song_name = entry_web.get()
     if song_name != placeholder_text:
