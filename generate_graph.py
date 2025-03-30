@@ -4,8 +4,8 @@ This module processes csv dataset files to generate the necessary objects to be 
 import csv
 from typing import Any
 
-from SongGraph import SongGraph
-from SongDecisionTree import SongDecisionTree, organize_levels, round_values
+from song_graph import SongGraph
+from song_decision_tree import SongDecisionTree, organize_levels, round_values
 
 DEFAULT_ORDER = ["danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness",
                  "instrumentalness", "liveness", "valence", "tempo", "genre"]
@@ -14,8 +14,8 @@ DATASET_NAME_1 = "datasets/kaggle_spotify_songs_1.csv"
 DATASET_NAME_2 = "datasets/kaggle_spotify_songs_2.csv"
 FILE_LENGTH_1 = 113999
 FILE_LENGTH_2 = 32833
-SONG_LIMIT_1 = 6000
-SONG_LIMIT_2 = 4000
+SONG_LIMIT_1 = 400
+SONG_LIMIT_2 = 1
 INTERVAL = 1
 
 BASE_GENRES = {"pop", "rock", "techno", "metal", "house", "reggae", "songwriter", "rap"}
@@ -119,7 +119,7 @@ def generate_song_graph() -> tuple[SongGraph, dict[Any, Any], SongDecisionTree, 
 if __name__ == '__main__':
     import python_ta
     python_ta.check_all(config={
-        'extra-imports': ['csv', 'SongGraph', 'SongDecisionTree', 'typing'],
+        'extra-imports': ['csv', 'song_graph', 'song_decision_tree'],
         'allowed-io': ['generate_song_graph'],
         'max-line-length': 120,
     })

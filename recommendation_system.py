@@ -4,9 +4,9 @@ based on inputs given by the user
 """
 import random
 from typing import Optional
-from GenerateGraph import generate_song_graph
-from SongGraph import SongGraph
-from SongDecisionTree import SongDecisionTree
+from generate_graph import generate_song_graph
+from song_graph import SongGraph
+from song_decision_tree import SongDecisionTree
 
 DEFAULT_RECOMMENDATION_COUNT = 10
 
@@ -26,7 +26,7 @@ class RecommendationSystem:
     tree: SongDecisionTree
     genres: list[str]
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize the RecommendationSystem class and generate the song graph.
         """
@@ -43,7 +43,6 @@ class RecommendationSystem:
             return self.song_list_names[given_input]
         else:
             options = self.tree.find_related_songs(given_input)
-            print(options)
             return options[random.randint(0, len(options) - 1)]
 
     def generate_recommendations(self, given_input: Optional[list[str] | list],
@@ -105,3 +104,12 @@ class RecommendationSystem:
                 prev_list = ordered_list[i]
             i += 1
         return ordered_list
+
+
+if __name__ == '__main__':
+    import python_ta
+    python_ta.check_all(config={
+        'extra-imports': ['random', 'song_graph', 'song_decision_tree', 'generate_graph'],
+        'allowed-imports': [],
+        'max-line-length': 120,
+    })

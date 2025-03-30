@@ -138,3 +138,12 @@ def round_values(inputs: list) -> list:
         else:
             res.append(inputs[i])
     return res
+
+if __name__ == '__main__':
+
+    import python_ta
+    python_ta.check_all(config={
+        'extra-imports': ['random'],
+        'allowed-imports': [],
+        'max-line-length': 120,
+    })
