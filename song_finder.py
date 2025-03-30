@@ -2,10 +2,10 @@
 This module would find song properties such as genre, danceability, energy, tempo, artists, etc. for a song that is not
 included in the CSV Spotify datasets.
 """
-import requests
-from bs4 import BeautifulSoup
 from urllib.parse import quote
 import re
+import requests
+from bs4 import BeautifulSoup
 import GenerateGraph
 
 PARENT_URL = "https://songdata.io"
@@ -22,6 +22,12 @@ def get_song_links(song_input: str) -> list:
     """
     Returns first 5 links on songdata.io by searching the website based on the song_input
     Returns empty list if nothing found
+
+    >>> links = get_song_links("Bohemian Rhapsody")
+    >>> links[0]
+    'https://songdata.io/track/6l8GvAyoUZwWDgF1e4822w/Bohemian%20Rhapsody-by-Queen'
+    >>> links[4]
+    'https://songdata.io/track/2OWOkkAQv7KFlScZymrfZ4/Bohemian%20Rhapsody-by-Rockabye%20Baby%21'
     """
     song_input = song_input.strip().replace(" ", "+")
     search_url = PARENT_URL + "/search?query=" + song_input
@@ -30,46 +36,6 @@ def get_song_links(song_input: str) -> list:
     links = soup.find_all("td", class_="table_img", limit=5)
 
     return [PARENT_URL + quote(td.find("a")["href"]) for td in links]
-
-
-def get_song_genre(song_name: str, artist: str) -> str:
-    """
-    Return's the song genre, bsed on the song_name and artist arguments
-    by webscraping a wikipedia page, or returns an empty string if the page or genre isn't found.
-    """
-    clean_name = re.sub(r"\s*(feat\.?|ft\.?).*", "", song_name, flags=re.IGNORECASE).strip()
-    api_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={quote(clean_name + " " + artist)}%20song&format=json"
-    data = requests.get(api_url).json()
-
-    if data["query"]["search"]:
-        page_title = quote(data["query"]["search"][0]["title"])
-        page_url = f"https://en.wikipedia.org/wiki/{page_title}"
-        song_data_page = requests.get(page_url)
-        genre_soup = BeautifulSoup(song_data_page.text, "html.parser")
-        try:
-            genre_row = genre_soup.find("th", string="Genre")
-            genre = genre_row.find_next_sibling("td").text
-            genre = genre.strip().split("\n")[0].lower()
-            return GenerateGraph.filter_genre(genre)
-        except AttributeError:
-            return ''
-
-
-def get_title_artist(song_page_url: str) -> tuple[str, str]:
-    """
-    Gets the title and artist of a song by scraping a songdata.io url link
-    Precondition:
-        - song_page_url: A valid URL from songdata.io that points to a specific song's page.
-    """
-    page = requests.get(song_page_url)
-    soup = BeautifulSoup(page.text, 'html.parser')
-
-    # Scraping track_name and artists
-    col12 = soup.find("div", class_="col-12 text-center")
-    col12_div = col12.find_all("div")
-
-    track_name, artists = col12_div[0].text, col12_div[1].text
-    return (track_name, artists)
 
 
 def get_song_properties(song_page_url: str) -> dict:
@@ -131,3 +97,67 @@ def get_song_properties(song_page_url: str) -> dict:
             "energy": energy, "key": key, "loudness": float(loudness), "mode": mode, "speechiness": speechiness,
             "acousticness": acousticness, "instrumentalness": instrumentalness, "liveness": liveness,
             "valence": valence, "tempo": int(tempo), "track_genre": track_genre}
+
+
+def get_song_genre(song_name: str, artist: str) -> str:
+    """
+    Return's the song genre, bsed on the song_name and artist arguments
+    by webscraping a wikipedia page, or returns an empty string if the page or genre isn't found.
+    The genre is filtered by the funciton in GenerateGraph
+    >>> get_song_genre("I Love It", "Icona Pop")
+    'pop'
+    >>> get_song_genre("Gangsta's Paradise", "Coolio")
+    'hip-hop'
+    """
+    clean_name = re.sub(r"\s*(feat\.?|ft\.?).*", "", song_name, flags=re.IGNORECASE).strip()
+    api_url = (f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="
+               f"{quote(clean_name + " " + artist)}%20song&format=json")
+    data = requests.get(api_url).json()
+
+    if data["query"]["search"]:
+        page_title = quote(data["query"]["search"][0]["title"])
+        page_url = f"https://en.wikipedia.org/wiki/{page_title}"
+        song_data_page = requests.get(page_url)
+        genre_soup = BeautifulSoup(song_data_page.text, "html.parser")
+        try:
+            genre_row = genre_soup.find("th", string="Genre")
+            genre = genre_row.find_next_sibling("td").text
+            genre = genre.strip().split("\n")[0].lower()
+            return GenerateGraph.filter_genre(genre)
+        except AttributeError:
+            return ''
+    return ''
+
+
+def get_title_artist(song_page_url: str) -> tuple[str, str]:
+    """
+    Gets the title and artist of a song by scraping a songdata.io url link
+    Precondition:
+        - song_page_url: A valid URL from songdata.io that points to a specific song's page.
+
+    >>> get_title_artist("https://songdata.io/track/3eekarcy7kvN4yt5ZFzltW/HIGHEST-IN-THE-ROOM-by-Travis-Scott")
+    ('HIGHEST IN THE ROOM', 'Travis Scott')
+    """
+    page = requests.get(song_page_url)
+    soup = BeautifulSoup(page.text, 'html.parser')
+
+    # Scraping track_name and artists
+    col12 = soup.find("div", class_="col-12 text-center")
+    col12_div = col12.find_all("div")
+
+    track_name, artists = col12_div[0].text, col12_div[1].text
+    return (track_name, artists)
+
+
+if __name__ == '__main__':
+    import doctest
+
+    doctest.testmod()
+
+    import python_ta
+
+    python_ta.check_all(config={
+        'extra-imports': ['urllib.parse', 'bs4', 'requests', 're', 'GenerateGraph'],
+        'allowed-imports': ['urllib.parse', 'bs4', 'requests', 're', 'GenerateGraph'],
+        'max-line-length': 120,
+    })

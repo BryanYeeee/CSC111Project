@@ -17,7 +17,7 @@ SONG_LIMIT_2 = 4000
 INTERVAL = 1
 
 BASE_GENRES = {"pop", "rock", "techno", "metal", "house", "reggae", "songwriter", "rap"}
-SAME_GENRES = {"rap": "hip-hop", "r&b": "r-n-b"}
+SAME_GENRES = {"rap": "hip-hop", "r&b": "r-n-b", "hip hop": "hip-hop"}
 
 SEARCH_BAR_SPLITTER = "｜"
 
@@ -29,8 +29,9 @@ def filter_genre(genre: str) -> str:
     for base_genre in BASE_GENRES:
         if base_genre in genre:
             genre = base_genre
-    if genre in SAME_GENRES:
-        return SAME_GENRES[genre]
+    for same_genre in SAME_GENRES:
+        if same_genre in genre:
+            return SAME_GENRES[same_genre]
     return genre
 
 
