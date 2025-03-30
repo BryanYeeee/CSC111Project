@@ -134,7 +134,6 @@ h_scrollbar.pack(side="bottom", fill="x")
 my_list.pack(side="left", fill="both", expand=True)
 
 
-# TODO prev_index
 def update(lst: list) -> None:
     """
         Update my_list for each keystroke
@@ -195,14 +194,14 @@ def add_song():
 
 def remove_song():
     """
-        Remove the last song from the listbox
+        Remove the selected song from the listbox
     """
-    last_song = my_selected.get("end")
-    if not last_song:
+    selected_song = my_selected.get(my_selected.curselection())
+    if not selected_song:
         return
-    song_list_names.append(last_song)
+    song_list_names.append(selected_song)
     update(song_list_names)
-    my_selected.delete("end")
+    my_selected.delete(my_selected.curselection())
 
 
 add_button = ttk.Button(widgets_frame, text="Add Song", style="Accent.TButton", command=add_song)
@@ -294,8 +293,7 @@ def search_web():
     song_links = song_finder.get_song_links(song_name)
 
     if not song_links:
-        ...
-            #todo: something that says nothing was found
+        web_list.insert("end", "No songs found with the given name!  ")
 
     for link in song_links:
         element = song_finder.get_title_artist(link)
