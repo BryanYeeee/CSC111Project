@@ -268,7 +268,7 @@ class SongGraph:
         """
         return sum(len(self._vertices[vid].neighbours) for vid in self._vertices) / (len(self._vertices))
 
-    def find_shortest_distance(self, orig_vertex_id: str, n: int) -> list[str, float]:
+    def find_shortest_distance(self, orig_vertex_id: str, n: int) -> list[tuple[Any, Any]]:
         """
         Given the id of a song in the graph, find n other songs that
         are similar to the song and return their vertex_ids in a list.
@@ -297,3 +297,11 @@ class SongGraph:
         res = [(key, shortest_distance[key]) for key in shortest_distance]
         res.sort(key=lambda x: x[1])
         return res[:n]
+
+
+if __name__ == '__main__':
+    import python_ta
+    python_ta.check_all(config={
+        'extra-imports': ['__future__', 'heapq', 'typing'],
+        'max-line-length': 120,
+    })
