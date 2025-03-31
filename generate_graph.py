@@ -72,7 +72,7 @@ def add_to_objects(vertex_id: str, name: str, artists: set[str],
                 "liveness": float(liveness),
                 "tempo": float(tempo),
                 "genre": genre,
-                })) + [vertex_id])
+            })) + [vertex_id])
     return genre.capitalize()
 
 
@@ -124,6 +124,7 @@ def generate_song_graph() -> tuple[SongGraph, dict[Any, Any], SongDecisionTree, 
 
 if __name__ == '__main__':
     import python_ta
+
     python_ta.check_all(config={
         'extra-imports': ['csv', 'song_graph', 'song_decision_tree'],
         'allowed-io': ['generate_song_graph'],
