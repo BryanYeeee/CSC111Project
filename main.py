@@ -191,7 +191,6 @@ if __name__ == "__main__":
             entry.delete(0, tk.END)
             entry.insert(0, placeholder_text)
             entry.configure(foreground="grey")
-        print(current_song)
 
 
     def remove_song():
@@ -708,7 +707,6 @@ if __name__ == "__main__":
             Gets the text input from the user, after they click the recommend button.
         """
         song_list = list(my_selected.get(0, "end"))
-        print(song_list)
         return song_list
 
 
@@ -750,7 +748,6 @@ if __name__ == "__main__":
         """
         Given the user input, generate the song recommendations.
         """
-        print(given_input)
         # firstly, clear the previous values
         for item in tree.get_children():
             tree.delete(item)
@@ -761,7 +758,6 @@ if __name__ == "__main__":
             return
 
         song_list = recommendation_system.generate_recommendations(given_input, recommended_count)
-        print(song_list)
         # case: no recommendations
         if all({lst == [] for lst in song_list}):
             tree.insert("", "end", values=("No similar songs found :(", "", ""))
