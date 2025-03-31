@@ -11,7 +11,7 @@ from recommendation_system import RecommendationSystem
 from song_decision_tree import organize_levels
 
 if __name__ == "__main__":
-
+    print("Program is starting...")
     recommendation_system = RecommendationSystem()
     song_list_names = list(recommendation_system.song_list_names.keys())
 
@@ -788,7 +788,7 @@ if __name__ == "__main__":
         for i in range(n):
             lst = song_list[i]
             if n > 1 and lst != []:
-                tree.insert("", "end", values=(f'NUMBER OF SONGS IN COMMON: {n - i}', "", ""), tags='header')
+                tree.insert("", "end", values=(f'SONGS IN COMMON: {n - i}', "", ""), tags='header')
             m = 0
             for item in lst:
                 tag = 'even' if m % 2 == 0 else 'odd'
